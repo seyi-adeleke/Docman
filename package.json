@@ -1,0 +1,30 @@
+{
+  "name": "docman",
+  "version": "1.0.0",
+  "description": "An api for managing users and documents",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seyi-adeleke/Docman.git"
+  },
+  "author": "adeleke adetokunbo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seyi-adeleke/Docman/issues"
+  },
+  "homepage": "https://github.com/seyi-adeleke/Docman#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "morgan": "^1.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb": "^15.0.2",
+    "eslint-plugin-import": "^2.7.0",
+    "nodemon": "^1.11.0"
+  }
+}
