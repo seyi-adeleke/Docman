@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -22,13 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-
-  User.prototype.generateHash = password =>
-    bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-
-  User.prototype.validatePassword = (password, hashPassword) => {
-    bcrypt.compareSync(password, hashPassword);
-  };
+  User.prototype.JWT = (id, email, name) =>
+    jwt.sign({ id, email, name }, 'secret', { expiresIn: 60 * 60 });
 
   return User;
 };
