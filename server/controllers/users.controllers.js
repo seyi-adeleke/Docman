@@ -18,6 +18,7 @@ module.exports.signUp = (req, res) => {
             name: req.body.name,
             email: req.body.email,
             password: bcrypt.hash(req.body.password),
+            roleId: 2,
           })
           .then((userResponse) => {
             const token = user.JWT(
@@ -79,3 +80,65 @@ module.exports.allUsers = (req, res) => {
     .then(users => res.status(200).send(users))
     .catch(error => res.status(400).send(error));
 };
+
+
+module.exports.getUser = (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (id !== req.decoded.id) {
+    return res.send({
+      message: 'Invalid command'
+    });
+  }
+  User
+    .findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: 'user Not Found',
+        });
+      }
+      return res.status(200).send(user);
+    })
+    .catch(error => res.status(400).send(error));
+};
+
+
+module.exports.updateUser = (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (id !== req.decoded.id) {
+    return res.send({
+      message: 'Invalid command'
+    });
+  }
+  User
+    .findById(req.params.id)
+    .then((user) => {
+      return user
+        .update({
+          name: req.body.name || user.name,
+          email: req.body.email || user.email,
+        })
+        .then(() => res.status(200).send(user))
+        .catch(error => res.status(400).send(error));
+    })
+    .catch(error => res.status(400).send(error));
+};
+
+module.exports.deleteUser = (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (id !== req.decoded.id) {
+    return res.send({
+      message: 'Invalid command'
+    });
+  }
+  User
+    .findById(req.params.id)
+    .then((user) => {
+      return user
+        .destroy()
+        .then(() => res.status(204).send())
+        .catch(error => res.status(400).send(error));
+    })
+    .catch(error => res.status(400).send(error));
+};
+
