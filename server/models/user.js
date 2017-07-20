@@ -19,8 +19,19 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: true
       }
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     }
   });
+
+  User.associate = (models) => {
+    User.belongsTo(models.Role, {
+      foreignKey: 'roleId',
+      onDelete: 'CASCADE',
+    });
+  };
 
   User.prototype.JWT = (id, email, name) =>
     jwt.sign({ id, email, name }, 'secret', { expiresIn: 60 * 60 });
