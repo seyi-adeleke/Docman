@@ -5,7 +5,7 @@ const LocalStorage = require('node-localstorage').LocalStorage,
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!localStorage.getItem('jwt')) {
-    return res.send({ message: 'there is no token' });
+    return res.send({ message: 'You are not logged in' });
   }
   const token = localStorage.getItem('jwt');
   jwt.verify(token, 'secret', (error, decoded) => {
