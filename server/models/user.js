@@ -37,8 +37,8 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  User.prototype.JWT = (id, email, name) =>
-    jwt.sign({ id, email, name }, 'secret', { expiresIn: 60 * 60 });
+  User.prototype.JWT = (id, email, name, roleId) =>
+    jwt.sign({ id, email, name, roleId }, 'secret', { expiresIn: 60 * 60 });
 
   return User;
 };

@@ -19,6 +19,15 @@ module.exports = {
         type: Sequelize.ENUM('Public', 'Private'),
         defaultvalue: 'Public',
       },
+      roleId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Roles',
+          key: 'id',
+          as: 'roleId',
+        }
+      },
       userId: {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
