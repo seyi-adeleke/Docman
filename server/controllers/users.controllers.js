@@ -26,7 +26,8 @@ module.exports.signUp = (req, res) => {
             const token = user.JWT(
               userResponse.dataValues.id,
               userResponse.dataValues.email,
-              userResponse.dataValues.name
+              userResponse.dataValues.name,
+              userResponse.dataValues.roleId
             );
             localStorage.setItem('jwt', token);
             res.status(201).send({
@@ -64,7 +65,8 @@ module.exports.login = (req, res) => {
       req.body.password, response[0].dataValues.password);
     if (isValidPassword) {
       const token = user.JWT(
-        response[0].dataValues.id, response[0].dataValues.email, response[0].dataValues.name
+        response[0].dataValues.id, response[0].dataValues.email, response[0].dataValues.name,
+        response[0].dataValues.roleId
       );
       localStorage.setItem('jwt', token);
       return res.status(200).json({ message: 'login successful', token });
