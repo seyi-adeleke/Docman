@@ -1,6 +1,8 @@
 import bcrypt from '../utilities/bcrypt';
 
 const User = require('../models').User;
+const Document = require('../models').Document;
+
 const LocalStorage = require('node-localstorage').LocalStorage,
   localStorage = new LocalStorage('./scratch');
 
@@ -76,7 +78,12 @@ module.exports.login = (req, res) => {
 
 module.exports.allUsers = (req, res) => {
   User
-    .findAll()
+    .findAll({
+      include: [{
+        model: Document,
+        as: 'Documents',
+      }]
+    })
     .then(users => res.status(200).send(users))
     .catch(error => res.status(400).send(error));
 };
@@ -90,7 +97,12 @@ module.exports.getUser = (req, res) => {
     });
   }
   User
-    .findById(req.params.id)
+    .findById(req.params.id, {
+      include: [{
+        model: Document,
+        as: 'Documents',
+      }]
+    })
     .then((user) => {
       if (!user) {
         return res.status(404).send({
