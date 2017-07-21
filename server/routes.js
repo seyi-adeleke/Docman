@@ -1,4 +1,6 @@
 import usersController from './controllers/users.controllers';
+import documentsController from './controllers/documents.controllers';
+
 import verify from './utilities/verifyUser';
 
 module.exports = (app) => {
@@ -10,5 +12,7 @@ module.exports = (app) => {
   app.get('/api/v1/users/:id', verify.isLoggedIn, usersController.getUser);
   app.put('/api/v1/users/:id', verify.isLoggedIn, usersController.updateUser);
   app.delete('/api/v1/users/:id', verify.isLoggedIn, usersController.deleteUser);
-};
+
+  app.post('/api/v1/documents', verify.isLoggedIn, documentsController.create);
+ };
 

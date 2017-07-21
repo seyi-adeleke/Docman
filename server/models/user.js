@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'roleId',
       onDelete: 'CASCADE',
     });
+    User.hasMany(models.Document, {
+      foreignKey: 'userId',
+      as: 'Documents',
+    });
   };
 
   User.prototype.JWT = (id, email, name) =>
