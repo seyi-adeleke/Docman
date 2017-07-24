@@ -1,5 +1,5 @@
 import usersController from './controllers/users.controllers';
-import documentsController from './controllers/documents.controllers';
+import documentsController from './controllers/documentControllers';
 
 import verify from './utilities/verifyUser';
 
@@ -17,5 +17,7 @@ module.exports = (app) => {
 
   app.get('/api/v1/documents', verify.isLoggedIn, documentsController.list);
   app.get('/api/v1/documents/:id', verify.isLoggedIn, documentsController.findDocument);
+  app.put('/api/v1/documents/:id', verify.isLoggedIn, documentsController.updateDocument);
+  app.delete('/api/v1/documents/:id', verify.isLoggedIn, documentsController.deleteDocument);
 };
 
