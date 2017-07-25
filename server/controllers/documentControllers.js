@@ -4,7 +4,6 @@ const Document = require('../models').Document;
 
 export default {
   create: (req, res) => {
-    console.log(req.decoded);
     const body = req.body;
     body.userId = req.decoded.id;
     body.roleId = req.decoded.roleId;
