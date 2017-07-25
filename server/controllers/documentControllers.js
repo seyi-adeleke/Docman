@@ -29,6 +29,10 @@ export default {
           model: db.User,
         }]
       };
+      if (req.query.limit && req.query.offset) {
+        query.limit = req.query.limit;
+        query.offset = req.query.offset;
+      }
     } else if (req.decoded.roleId === 3) {
       query = {
         where: { $or: [{ access: 'public' }, { access: 'role' }] },
@@ -36,6 +40,10 @@ export default {
           model: db.User
         }]
       };
+      if (req.query.limit && req.query.offset) {
+        query.limit = req.query.limit;
+        query.offset = req.query.offset;
+      }
     } else {
       query = {
         where: {},
@@ -43,6 +51,10 @@ export default {
           model: db.User
         }]
       };
+      if (req.query.limit && req.query.offset) {
+        query.limit = req.query.limit;
+        query.offset = req.query.offset;
+      }
     }
     Document
       .findAll(query)
@@ -102,6 +114,29 @@ export default {
         }
       })
       .catch(error => res.status(400).send(error));
+  },
+
+  searchDocuments: (req, res) => {
+    let query;
+    if (req.isAdmin) {
+      query = {
+        where: { title: req.query.q }
+      };
+    } else {
+      query = {
+        where: { title: req.query.q, access: 'public', roleId: req.decoded.roleId }
+      };
+    }
+    Document
+      .findAll(query)
+      .then((document) => {
+        if (document === undefined) {
+          return res.status(404).json({ message: 'this document doesnt exist' });
+        }
+        return res.status(200).json(document[0].dataValues);
+      })
+      .catch(error => res.status(400).send(error));
   }
 
 };
+
