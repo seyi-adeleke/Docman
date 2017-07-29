@@ -12,7 +12,7 @@ var Sequelize = require('sequelize');
 
 var basename = path.basename(module.filename);
 var env = process.env.NODE_ENV || 'development';
-var config = require('../config/config')[env];
+var config = require(__dirname + '/../config/config.json')[env];
 
 var db = {};
 _dotenv2.default.config();
