@@ -1,15 +1,15 @@
 import chai, { expect } from 'chai';
 import jwt from 'jsonwebtoken';
 
-import bcrypt from '../server/utilities/bcrypt';
+import bcrypt from '../build/utilities/bcrypt';
 
-const User = require('../server/models').User;
-const Document = require('../server/models').Document;
-const Role = require('../server/models').Role;
+const User = require('../build/models').User;
+const Document = require('../build/models').Document;
+const Role = require('../build/models').Role;
 const request = require('supertest');
 const assert = require('chai').assert;
 require('babel-register');
-const app = require('../server/app').default;
+const app = require('../build/app').default;
 
 let token;
 let newToken;

@@ -25,7 +25,6 @@ module.exports = function (sequelize, DataTypes) {
   });
 
   Document.associate = function (models) {
-    console.log(models);
     Document.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
