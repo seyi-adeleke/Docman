@@ -3,5 +3,4 @@ node_modules/
 server/config
 scratch/
 coverage/
-build/
 .env
