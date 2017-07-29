@@ -9,9 +9,7 @@ export default {
     body.roleId = req.decoded.roleId;
     if (body.roleId === 2) {
       if (body.access === 'role') {
-        return res.send({
-          message: 'Invalid command'
-        });
+        return res.status(404).json({ message: 'You cannot create Role based documents' });
       }
     }
     Document
@@ -22,40 +20,15 @@ export default {
 
   list: (req, res) => {
     let query;
-    if (req.decoded.roleId === 2) {
-      query = {
-        where: { access: 'public' },
-        include: [{
-          model: db.User,
-        }]
-      };
-      if (req.query.limit && req.query.offset) {
-        query.limit = req.query.limit;
-        query.offset = req.query.offset;
-      }
-    } else if (req.decoded.roleId === 3) {
-      query = {
-        where: { $or: [{ access: 'public' }, { access: 'role' }] },
-        include: [{
-          model: db.User
-        }]
-      };
-      if (req.query.limit && req.query.offset) {
-        query.limit = req.query.limit;
-        query.offset = req.query.offset;
-      }
-    } else {
-      query = {
-        where: {},
-        include: [{
-          model: db.User
-        }]
-      };
-      if (req.query.limit && req.query.offset) {
-        query.limit = req.query.limit;
-        query.offset = req.query.offset;
-      }
+    const limit = parseInt(req.query.limit, 10);
+    const offset = parseInt(req.query.offset, 10);
+    if (limit && offset) {
+      query.limit = limit;
+      query.offset = offset;
     }
+    query = {
+      where: {}
+    };
     Document
       .findAll(query)
       .then(documents => res.status(200).send(documents))

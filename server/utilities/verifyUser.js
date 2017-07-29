@@ -1,13 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-const LocalStorage = require('node-localstorage').LocalStorage,
-  localStorage = new LocalStorage('./scratch');
-
 module.exports.isLoggedIn = (req, res, next) => {
-  if (!localStorage.getItem('jwt')) {
+  if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });
   }
-  const token = localStorage.getItem('jwt');
+  const token = (req.headers.authorization);
   jwt.verify(token, 'secret', (error, decoded) => {
     if (error) {
       return res.send({ message: 'There was an error processing your request' });
@@ -21,10 +18,11 @@ module.exports.isLoggedIn = (req, res, next) => {
 };
 
 module.exports.isAdmin = (req, res, next) => {
-  if (!localStorage.getItem('jwt')) {
+  if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });
   }
-  const token = localStorage.getItem('jwt');
+  const token = (req.headers.authorization);
+
   jwt.verify(token, 'secret', (error, decoded) => {
     if (error) {
       return res.send({ message: 'There was an error processing your request' });

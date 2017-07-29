@@ -16,7 +16,7 @@ module.exports = (app) => {
 
   app.post('/api/v1/documents', verify.isLoggedIn, documentsController.create);
 
-  app.get('/api/v1/documents', verify.isLoggedIn, documentsController.list);
+  app.get('/api/v1/documents', verify.isAdmin, documentsController.list);
   app.get('/api/v1/documents/:id', verify.isLoggedIn, documentsController.findDocument);
   app.put('/api/v1/documents/:id', verify.isLoggedIn, documentsController.updateDocument);
   app.delete('/api/v1/documents/:id', verify.isLoggedIn, documentsController.deleteDocument);
