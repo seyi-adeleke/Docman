@@ -14,6 +14,7 @@ var basename = path.basename(module.filename);
 var env = process.env.NODE_ENV || 'development';
 const config = require('../../server/config/config')[env];
 
+
 var db = {};
 _dotenv2.default.config();
 var sequelize = void 0;

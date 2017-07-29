@@ -11,6 +11,7 @@ const assert = require('chai').assert;
 require('babel-register');
 const app = require('../build/app').default;
 
+
 let token;
 let newToken;
 
