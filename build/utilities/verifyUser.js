@@ -1,11 +1,17 @@
-import jwt from 'jsonwebtoken';
+'use strict';
 
-module.exports.isLoggedIn = (req, res, next) => {
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports.isLoggedIn = function (req, res, next) {
   if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });
   }
-  const token = (req.headers.authorization);
-  jwt.verify(token, 'secret', (error, decoded) => {
+  var token = req.headers.authorization;
+  _jsonwebtoken2.default.verify(token, 'secret', function (error, decoded) {
     if (error) {
       return res.send({ message: 'There was an error processing your request' });
     }
@@ -17,13 +23,13 @@ module.exports.isLoggedIn = (req, res, next) => {
   });
 };
 
-module.exports.isAdmin = (req, res, next) => {
+module.exports.isAdmin = function (req, res, next) {
   if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });
   }
-  const token = (req.headers.authorization);
+  var token = req.headers.authorization;
 
-  jwt.verify(token, 'secret', (error, decoded) => {
+  _jsonwebtoken2.default.verify(token, 'secret', function (error, decoded) {
     if (error) {
       return res.send({ message: 'There was an error processing your request' });
     }

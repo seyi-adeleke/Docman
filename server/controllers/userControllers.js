@@ -3,8 +3,6 @@ import bcrypt from '../utilities/bcrypt';
 const User = require('../models').User;
 const Document = require('../models').Document;
 
-const LocalStorage = require('node-localstorage').LocalStorage,
-  localStorage = new LocalStorage('./scratch');
 
 export default {
   signUp: (req, res) => {
@@ -30,9 +28,9 @@ export default {
                 userResponse.dataValues.name,
                 userResponse.dataValues.roleId
               );
-              localStorage.setItem('jwt', token);
               res.status(201).send({
-                message: 'Registration Was Succesfull, You have been logged in'
+                message: 'Registration Was Succesfull, You have been logged in',
+                token
               });
             })
             .catch((error) => {
@@ -69,7 +67,6 @@ export default {
           response[0].dataValues.id, response[0].dataValues.email, response[0].dataValues.name,
           response[0].dataValues.roleId
         );
-        localStorage.setItem('jwt', token);
         return res.status(200).json({ message: 'login successful', token });
       }
       return res.json({
@@ -98,9 +95,9 @@ export default {
 
   getUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
-    if (id !== req.decoded.id) {
-      return res.send({
-        message: 'Invalid command'
+    if (id !== req.decoded.id && !req.isAdmin) {
+      return res.status(400).send({
+        message: 'You do not have access to this users information'
       });
     }
     User
@@ -111,11 +108,6 @@ export default {
         }]
       })
       .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'user Not Found',
-          });
-        }
         return res.status(200).send(user);
       })
       .catch(error => res.status(400).send(error));
@@ -124,7 +116,7 @@ export default {
   updateUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
-      return res.send({
+      return res.status(400).send({
         message: 'Invalid command'
       });
     }
@@ -145,7 +137,7 @@ export default {
   deleteUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
-      return res.send({
+      return res.status(400).send({
         message: 'Invalid command'
       });
     }
