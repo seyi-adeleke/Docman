@@ -6,8 +6,8 @@
   "scripts": {
     "start": "babel-node -- ./server/app.js",
     "start:dev": "NODE_ENV=development nodemon ./server/app.js --exec babel-node",
-    "test": "NODE_ENV=test gulp dev &&  gulp test",
-    "coverage": "NODE_ENV=test gulp coverage"
+    "test": "gulp dev &&  gulp test",
+    "coverage": "gulp coverage"
   },
   "repository": {
     "type": "git",

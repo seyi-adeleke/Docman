@@ -7,6 +7,7 @@ import coveralls from 'gulp-coveralls';
 import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
 
+process.env.NODE_ENV = 'test';
 
 const jasmineNodeOpts = {
   timeout: 90000,
