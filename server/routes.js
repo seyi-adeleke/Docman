@@ -23,5 +23,7 @@ module.exports = (app) => {
 
   app.get('/api/v1/search/documents/', verify.isLoggedIn, documentsController.searchDocuments);
   app.get('/api/v1/search/users/', verify.isLoggedIn, usersController.searchUsers);
+
+  app.put('/api/v1/users/:id/role', verify.isAdmin, usersController.changeRole);
 };
 
