@@ -232,33 +232,34 @@ describe('User Controller ', () => {
           });
       });
   });
-  // it('returns an error message if the user tries to update another users details', (done) => {
-  //   request(app)
-  //     .post('/api/v1/users')
-  //     .send({
-  //       name: 'test',
-  //       password: 'test',
-  //       email: 'test@test.com',
-  //       roleId: 2
-  //     })
-  //     .expect(200)
-  //     .end((err, res) => {
-  //       token = res.body.token;
-  //       request(app)
-  //         .put('/api/v1/users/100')
-  //         .send({
-  //           email: 'adeleke@adeleke.com',
-  //         })
-  //         .set('Authorization', `${token}`)
-  //         .set('Accept', 'application/json')
-  //         .expect(400)
-  //         .end((err, res) => {
-  //           expect((res.body.message)).to.equals('Invalid command');
-  //           done();
-  //         });
-  //       done();
-  //     });
-  // });
+    //dfghjkl
+  xit('returns an error message if the user tries to update another users details', (done) => {
+    request(app)
+      .post('/api/v1/users')
+      .send({
+        name: 'test',
+        password: 'test',
+        email: 'test@test.com',
+        roleId: 2
+      })
+      .expect(200)
+      .end((err, res) => {
+        token = res.body.token;
+        request(app)
+          .put('/api/v1/users/100')
+          .send({
+            email: 'adeleke@adeleke.com',
+          })
+          .set('Authorization', `${token}`)
+          .set('Accept', 'application/json')
+          .expect(400)
+          .end((err, res) => {
+            expect((res.body.message)).to.equals('Invalid command');
+            done();
+          });
+        done();
+      });
+  });
   it('searches for a users documents', (done) => {
     request(app)
       .post('/api/v1/users')
@@ -320,12 +321,13 @@ describe('User Controller ', () => {
       .end((err, res) => {
         token = res.body.token;
         request(app)
-          .get('/api/v1/search/users/?q=man')
+          .get('/api/v1/search/users/?q=adsf')
           .set('Authorization', `${token}`)
           .set('Accept', 'application/json')
           .expect(400)
           .end((err, res) => {
-            expect(res.status).to.equal(400);
+            expect(res.status).to.equal(404);
+            expect(res.body.message).to.equal('this user doesnt exist');
             done();
           });
       });
@@ -380,6 +382,98 @@ describe('User Controller ', () => {
             .end((err, res) => {
               expect(res.body.length).to.equal(0);
               done();
+            });
+        });
+    });
+  });
+
+  it('admin does an admin thing', (done) => {
+    User.create({
+      name: 'admin',
+      email: 'admin@admin.com',
+      password: bcrypt.hash('admin'),
+      roleId: 1
+    }).then((res) => {
+      request(app)
+        .post('/api/v1/users/')
+        .send({
+          name: 'femi',
+          password: 'femi',
+          email: 'femi@femi.com',
+          roleId: 2,
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/users/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'admin',
+            })
+            .expect(200)
+            .end((err, res) => {
+              token = res.body.token;
+              request(app)
+                .put('/api/v1/users/2/role')
+                .send({
+                  role: 3
+                })
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                  expect(res.status).to.equal(200);
+                  expect(res.body.roleId).to.equal(3);
+                  done();
+                });
+            });
+        });
+    });
+  });
+
+  it('admin does an admin thing', (done) => {
+    User.create({
+      name: 'admin',
+      email: 'admin@admin.com',
+      password: bcrypt.hash('admin'),
+      roleId: 1
+    }).then((res) => {
+      request(app)
+        .post('/api/v1/users/')
+        .send({
+          name: 'femi',
+          password: 'femi',
+          email: 'femi@femi.com',
+          roleId: 2,
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/users/login')
+            .send({
+              email: 'admin@admin.com',
+              password: 'admin',
+            })
+            .expect(200)
+            .end((err, res) => {
+              token = res.body.token;
+              request(app)
+                .put('/api/v1/users/2/role')
+                .send({
+                  role: 100
+                })
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(404)
+                .end((err, res) => {
+                  expect(res.status).to.equal(404);
+                  expect(res.body.message).to.equal('invalid command');
+                  done();
+                });
             });
         });
     });

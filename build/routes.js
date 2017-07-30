@@ -34,4 +34,6 @@ module.exports = function (app) {
 
   app.get('/api/v1/search/documents/', _verifyUser2.default.isLoggedIn, _documentControllers2.default.searchDocuments);
   app.get('/api/v1/search/users/', _verifyUser2.default.isLoggedIn, _userControllers2.default.searchUsers);
+
+  app.put('/api/v1/users/:id/role', _verifyUser2.default.isAdmin, _userControllers2.default.changeRole);
 };
