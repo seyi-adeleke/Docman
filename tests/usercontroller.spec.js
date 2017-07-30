@@ -232,7 +232,7 @@ describe('User Controller ', () => {
           });
       });
   });
-    //dfghjkl
+  //dfghjkl
   xit('returns an error message if the user tries to update another users details', (done) => {
     request(app)
       .post('/api/v1/users')
@@ -478,4 +478,48 @@ describe('User Controller ', () => {
         });
     });
   });
+
+  it('Return a 200 when an admin finds a document that exists', (done) => {
+    User.create({
+      name: 'admin',
+      email: 'admin@admin.com',
+      password: bcrypt.hash('admin'),
+      roleId: 1
+    }).then((res) => {
+      request(app)
+        .post('/api/v1/users/login')
+        .send({
+          email: 'admin@admin.com',
+          password: 'admin',
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents/')
+            .send({
+              title: 'title',
+              content: 'content',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              request(app)
+                .get('/api/v1/documents/1')
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) =>{
+                  expect(res.status).to.equal(200);
+                  expect(res.body.title).to.equal('title');
+                  done();
+                });
+            });
+        });
+    });
+  });
+
 });
