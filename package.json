@@ -4,7 +4,8 @@
   "description": "An api for managing users and documents",
   "main": "index.js",
   "scripts": {
-    "start": "./server/app.js --exec babel-node",
+    "postinstall": "gulp dev",
+    "start": "node build/app.js",
     "start:dev": "NODE_ENV=development nodemon ./server/app.js --exec babel-node",
     "test": "gulp dev &&  gulp test",
     "coverage": "gulp coverage"
