@@ -40,15 +40,20 @@ export default {
       .findById(req.params.id)
       .then((document) => {
         if (!document) {
-          return res.status(404).json({ message: 'this document doesnt exist' });
-        } else if ((req.decoded.id === document.userId || req.isAdmin)) {
+          return res.status(404).json({ message: 'This documents doesn\'t exist' });
+        } else if (req.isAdmin) {
           return res.status(200).json(document);
-        } else if (req.decoded.id !== document.userId) {
-          return res.status(404).json({ message: 'you dont have access to this document' });
+        } else if (document.access === 'public') {
+          return res.status(200).json(document);
+        } else if (document.access === 'private' && req.decoded.id !== document.userId) {
+          return res.status(404).json({ message: 'You do not have access to this document' });
+        } else if (document.access === 'role' && req.decoded.roleId === 3) {
+          return res.status(200).json(document);
         }
       })
       .catch(error => res.status(400).send(error));
   },
+
 
   updateDocument: (req, res) => {
     Document
@@ -95,15 +100,19 @@ export default {
       query = {
         where: { title: req.query.q }
       };
-    } else {
+    } else if (req.decoded.roleId === 2) {
       query = {
-        where: { title: req.query.q, access: 'public', roleId: req.decoded.roleId }
+        where: { title: req.query.q, access: 'public' }
+      };
+    } else if (req.decoded.roleId === 3) {
+      query = {
+        where: { title: req.query.q, $or: [{ access: 'public' }, { access: 'role' }] }
       };
     }
     Document
       .findAll(query)
       .then((document) => {
-        if (document === undefined) {
+        if (document[0] === undefined) {
           return res.status(404).json({ message: 'this document doesnt exist' });
         }
         return res.status(200).json(document[0].dataValues);
