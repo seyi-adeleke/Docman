@@ -146,8 +146,7 @@ export default {
       .then((user) => {
         user
           .destroy()
-          .then(() => res.status(204).send())
-          .catch(error => res.status(400).send(error));
+          .then(() => res.status(204).send());
       })
       .catch(error => res.status(400).send(error));
   },
@@ -179,10 +178,29 @@ export default {
     User
       .findAll(query)
       .then((user) => {
-        if (user === undefined) {
+        if (user[0] === undefined) {
           return res.status(404).json({ message: 'this user doesnt exist' });
         }
         return res.status(200).json(user[0].dataValues);
+      })
+      .catch(error => res.status(400).send(error));
+  },
+
+  changeRole: (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    User
+      .findById(id)
+      .then((user) => {
+        const role = parseInt(req.body.role, 10);
+        if (role >= 1 && role <= 3) {
+          user
+            .update({
+              roleId: req.body.role || user.roleId,
+            })
+            .then(() => res.status(200).send(user));
+        } else {
+          return res.status(404).json({ message: 'invalid command' });
+        }
       })
       .catch(error => res.status(400).send(error));
   }

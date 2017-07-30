@@ -140,8 +140,6 @@ exports.default = {
     User.findById(req.params.id).then(function (user) {
       user.destroy().then(function () {
         return res.status(204).send();
-      }).catch(function (error) {
-        return res.status(400).send(error);
       });
     }).catch(function (error) {
       return res.status(400).send(error);
@@ -172,10 +170,28 @@ exports.default = {
       where: { name: req.query.q }
     };
     User.findAll(query).then(function (user) {
-      if (user === undefined) {
+      if (user[0] === undefined) {
         return res.status(404).json({ message: 'this user doesnt exist' });
       }
       return res.status(200).json(user[0].dataValues);
+    }).catch(function (error) {
+      return res.status(400).send(error);
+    });
+  },
+
+  changeRole: function changeRole(req, res) {
+    var id = parseInt(req.params.id, 10);
+    User.findById(id).then(function (user) {
+      var role = parseInt(req.body.role, 10);
+      if (role >= 1 && role <= 3) {
+        user.update({
+          roleId: req.body.role || user.roleId
+        }).then(function () {
+          return res.status(200).send(user);
+        });
+      } else {
+        return res.status(404).json({ message: 'invalid command' });
+      }
     }).catch(function (error) {
       return res.status(400).send(error);
     });
