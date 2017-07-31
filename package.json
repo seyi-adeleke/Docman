@@ -7,7 +7,7 @@
     "postinstall": "gulp dev",
     "start": "node build/app.js",
     "start:dev": "NODE_ENV=development nodemon ./server/app.js --exec babel-node",
-    "test": "gulp dev &&  gulp test",
+    "test": "gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "coverage": "gulp coverage"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "babel-register": "^6.24.1",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
+    "coveralls": "^2.13.1",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
