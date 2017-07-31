@@ -71,7 +71,6 @@ export default {
             access: req.body.access || document.access
           })
           .then(() => res.status(200).send(document))
-          .catch(error => res.status(400).send(error));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -102,11 +101,11 @@ export default {
       };
     } else if (req.decoded.roleId === 2) {
       query = {
-        where: { title: req.query.q, access: 'public' }
+        where: { title: req.query.q, access: 'Public' }
       };
     } else if (req.decoded.roleId === 3) {
       query = {
-        where: { title: req.query.q, $or: [{ access: 'public' }, { access: 'role' }] }
+        where: { title: req.query.q, $or: [{ access: 'Public' }, { access: 'role' }] }
       };
     }
     Document
