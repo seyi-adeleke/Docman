@@ -136,13 +136,8 @@ export default {
 
   deleteUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
-    if (id !== req.decoded.id) {
-      return res.status(400).send({
-        message: 'Invalid command'
-      });
-    }
     User
-      .findById(req.params.id)
+      .findById(id)
       .then((user) => {
         user
           .destroy()
