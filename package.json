@@ -8,7 +8,9 @@
     "start": "node build/app.js",
     "start:dev": "NODE_ENV=development nodemon ./server/app.js --exec babel-node",
     "test": "gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "coverage": "gulp coverage"
+    "coverage": "gulp coverage",
+    "config-prod-db":"NODE_ENV=production sequelize db:migrate && npm run seed",
+    "seed": "sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
