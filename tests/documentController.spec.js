@@ -174,7 +174,7 @@ describe('Document Controller ', () => {
         });
     });
 
-    xit('returns a 200 if users try to find documents that belong to them and exist', (done) => {
+    it('returns a 200 if users try to find documents that belong to them and exist', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -228,7 +228,7 @@ describe('Document Controller ', () => {
             .send({
               title: 'title',
               content: 'content',
-              access: 'Private'
+              access: 'private'
             })
             .set('Authorization', `${token}`)
             .set('Accept', 'application/json')
@@ -253,9 +253,9 @@ describe('Document Controller ', () => {
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end((err, res) => {
-                      console.log(res.body);
+                      expect(res.body.message).to.equal('You do not have access to this document')
+                      done();
                     });
-                  done();
                 });
             });
         });
@@ -372,6 +372,45 @@ describe('Document Controller ', () => {
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
                   expect((res.body.title)).to.equals('another title');
+                  done();
+                });
+            });
+        });
+    });
+
+    it('return a 400 if a nomral user tries to change the access of a document to  `role` ', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents')
+            .send({
+              title: 'title',
+              content: 'content',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              request(app)
+                .put('/api/v1/documents/1')
+                .send({
+                  access: 'role'
+                })
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .end((err, res) => {
+                  expect((res.body.message)).to.equals('You cannot create role based documents');
                   done();
                 });
             });
@@ -512,6 +551,6 @@ describe('Document Controller ', () => {
               done();
             });
         });
-    }); 
+    });
   });
 });

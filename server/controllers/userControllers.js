@@ -6,6 +6,9 @@ const Document = require('../models').Document;
 
 export default {
   signUp: (req, res) => {
+    if (req.body.name === undefined || req.body.email === undefined || req.body.password === undefined) {
+      return res.status(400).send({ message: 'Please crosscheck your information' });
+    }
     User.findAll({
       where: {
         email: req.body.email
@@ -49,6 +52,9 @@ export default {
   },
 
   login: (req, res) => {
+    if (req.body.password === undefined) {
+      return res.status(404).json({ message: 'Please input a password' });
+    }
     User.findAll({
       where: {
         email: req.body.email
@@ -117,7 +123,7 @@ export default {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
       return res.status(400).send({
-        message: 'Invalid command'
+        message: 'You cannot edit this users information'
       });
     }
     User

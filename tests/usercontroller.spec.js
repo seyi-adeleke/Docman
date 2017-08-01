@@ -87,12 +87,9 @@ describe('User Controller ', () => {
         })
         .expect(400)
         .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'Your signup was not completed, please crosscheck your information');
-            done();
-          } else {
-            assert.ifError(err);
-          }
+          expect(res.body.message).to.equals('Please crosscheck your information');
+          expect(res.status).to.equal(400);
+          done();
         });
     });
   });
@@ -117,7 +114,7 @@ describe('User Controller ', () => {
         .send()
         .expect(200)
         .end((err, res) => {
-          expect(res.body.message).to.equals('This account doesnt exist');
+          expect(res.body.message).to.equals('Please input a password');
           done();
         });
       done();
