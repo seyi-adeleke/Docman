@@ -9,7 +9,7 @@
     "start:dev": "NODE_ENV=development nodemon ./server/app.js --exec babel-node",
     "test": "gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "coverage": "gulp coverage",
-    "config-prod-db":"NODE_ENV=production sequelize db:migrate && npm run seed",
+    "config-prod-db": "NODE_ENV=production sequelize db:migrate && npm run seed",
     "seed": "NODE_ENV=production sequelize db:seed:all"
   },
   "repository": {
@@ -52,7 +52,8 @@
     "passport-jwt": "^2.2.1",
     "pg": "^6.4.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.2.1"
+    "sequelize": "^4.2.1",
+    "validator": "^8.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.0",

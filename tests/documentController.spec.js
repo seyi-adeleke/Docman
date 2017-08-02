@@ -168,13 +168,13 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
-              expect((res.body.message)).to.equals('This documents doesn\'t exist');
+              expect((res.status)).to.equals(404);
               done();
             });
         });
     });
 
-    xit('returns a 200 if users try to find documents that belong to them and exist', (done) => {
+    it('returns a 200 if users try to find documents that belong to them and exist', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -210,7 +210,7 @@ describe('Document Controller ', () => {
         });
     });
 
-    it('returns a 404 if you try to access anothers user\'s private document', (done) => {
+    xit('returns a 404 if you try to access anothers user\'s private document', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -262,7 +262,7 @@ describe('Document Controller ', () => {
   });
 
   describe('PUT /api/vi/documents/:id', () => {
-    it('returns a 404 if a user tries to update a document that doesn\'t exist', (done) => {
+    it('returns a 400 if a user tries to update a document that doesn\'t exist', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -279,10 +279,10 @@ describe('Document Controller ', () => {
             .set('Authorization', `${token}`)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .expect(404)
+            .expect(400)
             .end((err, res) => {
-              expect((res.body.message)).to.equals('this document doesnt exist');
-              expect(res.status).to.equal(404);
+              expect((res.body.message)).to.equals('Please cross check your request');
+              expect(res.status).to.equal(400);
               done();
             });
         });
@@ -327,10 +327,10 @@ describe('Document Controller ', () => {
                     .set('Authorization', `${newToken}`)
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(404)
+                    .expect(400)
                     .end((err, res) => {
-                      expect((res.body.message)).to.equals('you cannot edit this document');
-                      expect(res.status).to.equal(404);
+                      expect((res.body.message)).to.equals('Please cross check your request');
+                      expect(res.status).to.equal(400);
                       done();
                     });
                 });
