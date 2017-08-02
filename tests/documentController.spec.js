@@ -273,7 +273,7 @@ describe('Document Controller ', () => {
   });
 
   describe('PUT /api/vi/documents/:id', () => {
-    it('returns a 400 if a user tries to update a document that doesn\'t exist', (done) => {
+    it('returns a 400 if a user makes a request without sending data', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -294,6 +294,34 @@ describe('Document Controller ', () => {
             .end((err, res) => {
               expect((res.body.message)).to.equals('Please cross check your request');
               expect(res.status).to.equal(400);
+              done();
+            });
+        });
+    });
+    it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .put('/api/v1/documents/100')
+            .send({
+              title: 'title'
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(404)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('this document doesnt exist');
+              expect(res.status).to.equal(404);
               done();
             });
         });
@@ -335,13 +363,16 @@ describe('Document Controller ', () => {
                   newToken = res.body.token;
                   request(app)
                     .put('/api/v1/documents/1')
+                    .send({
+                      title: 'some new title'
+                    })
                     .set('Authorization', `${newToken}`)
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(400)
+                    .expect(404)
                     .end((err, res) => {
-                      expect((res.body.message)).to.equals('Please cross check your request');
-                      expect(res.status).to.equal(400);
+                      expect((res.body.message)).to.equals('you cannot edit this document');
+                      expect(res.status).to.equal(404);
                       done();
                     });
                 });

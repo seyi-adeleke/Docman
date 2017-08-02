@@ -79,6 +79,33 @@ describe('User Controller ', () => {
         });
     });
 
+    it('returns an error message if a user tries to signup twice', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .post('/api/v1/users')
+            .send({
+              name: 'ade',
+              password: 'seyi',
+              email: 'seyi@seyi.com',
+              roleId: 2
+            })
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('This user exists');
+              done();
+            });
+        });
+    });
+
     it('throws a 400 for incorrect sign up info', (done) => {
       request(app)
         .post('/api/v1/users')
@@ -118,6 +145,30 @@ describe('User Controller ', () => {
           done();
         });
       done();
+    });
+    it('responds with an error message if the email/password is incorrect', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: bcrypt.hash('seyi'),
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .post('/api/v1/users/login')
+            .send({
+              password: 'sey',
+              email: 'seyi@seyi.com',
+            })
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('email/password incorrect');
+              done();
+            });
+        });
     });
   });
 
@@ -359,10 +410,36 @@ describe('User Controller ', () => {
             });
         });
     });
+    it('returns an error message if the user tries to update their email with an invalid value', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'test',
+          password: 'test',
+          email: 'test@test.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .put('/api/v1/users/1')
+            .send({
+              email: 'adeleke.com',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect(400)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('Please use a valid email');
+              done();
+            });
+        });
+    });
   });
 
   describe('GET /api/v1/users/:id/documents', () => {
-    it('searches for a users documents', (done) => {
+    it('Returns a message if the user doesnt have any documents', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -384,6 +461,41 @@ describe('User Controller ', () => {
               done();
             });
           done();
+        });
+    });
+
+    it('Returns a users documents', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'test',
+          password: 'test',
+          email: 'test@test.com',
+          roleId: 2
+        })
+        .expect(204)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents/')
+            .send({
+              title: 'title',
+              content: 'content',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .end((err, res) => {
+              request(app)
+                .get('/api/v1/users/1/documents')
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect(200)
+                .end((err, res) => {
+                  expect(res.status).to.equals(200);
+                  done();
+                });
+            });
         });
     });
 
