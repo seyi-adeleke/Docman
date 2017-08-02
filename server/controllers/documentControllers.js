@@ -4,7 +4,14 @@ const Document = require('../models').Document;
 
 export default {
   create: (req, res) => {
+    if (req.body.title === undefined || req.body.content === undefined) {
+      return res.status(400).send({ message: 'Please input a title or some content' });
+    }
     const body = req.body;
+    if (body.access === undefined) {
+      body.access = 'public';
+    }
+    body.access = req.body.access.toLowerCase();
     body.userId = req.decoded.id;
     body.roleId = req.decoded.roleId;
     if (body.roleId === 2) {
@@ -14,7 +21,9 @@ export default {
     }
     Document
       .create(body)
-      .then(response => res.status(201).send(response))
+      .then(response => res.status(201).send({
+        message: 'Document created succesfully',
+        response }))
       .catch(error => res.status(400).send(error));
   },
 
@@ -42,13 +51,13 @@ export default {
         if (!document) {
           return res.status(404).json({ message: 'This documents doesn\'t exist' });
         } else if (req.isAdmin) {
-          return res.status(200).json(document);
+          return res.status(200).send(document);
         } else if (document.access === 'public') {
-          return res.status(200).json(document);
+          return res.status(200).json({ message: 'Document Found succesfully', document });
         } else if (document.access === 'private' && req.decoded.id !== document.userId) {
           return res.status(404).json({ message: 'You do not have access to this document' });
         } else if (document.access === 'role' && req.decoded.roleId === 3) {
-          return res.status(200).json(document);
+          return res.status(200).json({ message: 'Document Found succesfully', document });
         }
       })
       .catch(error => res.status(400).send(error));
@@ -59,6 +68,14 @@ export default {
     Document
       .findById(req.params.id)
       .then((document) => {
+        const updatedDocument = {
+          title: req.body.title,
+          content: req.body.content,
+          access: req.body.access
+        };
+        if (req.body.access === 'role' && req.decoded.roleId === 2) {
+          return res.status(400).send({ message: 'You cannot create role based documents' });
+        }
         if (!document) {
           return res.status(404).json({ message: 'this document doesnt exist' });
         } else if (document.userId !== req.decoded.id) {
@@ -70,7 +87,7 @@ export default {
             content: req.body.content || document.content,
             access: req.body.access || document.access
           })
-          .then(() => res.status(200).send(document))
+          .then(() => res.status(200).json({ message: 'Document updated', updatedDocument }));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -101,20 +118,25 @@ export default {
       };
     } else if (req.decoded.roleId === 2) {
       query = {
-        where: { title: req.query.q, access: 'Public' }
+        where: { title: req.query.q, access: 'public' }
       };
     } else if (req.decoded.roleId === 3) {
       query = {
-        where: { title: req.query.q, $or: [{ access: 'Public' }, { access: 'role' }] }
+        where: { title: req.query.q, $or: [{ access: 'public' }, { access: 'role' }] }
       };
     }
     Document
       .findAll(query)
       .then((document) => {
+        const message = 'Document Found';
         if (document[0] === undefined) {
-          return res.status(404).json({ message: 'this document doesnt exist' });
+          return res.status(404).json({ message: 'This document doesnt exist' });
         }
-        return res.status(200).json(document[0].dataValues);
+        const searchedDocument = {
+          title: document[0].dataValues.title,
+          content: document[0].dataValues.content
+        };
+        return res.status(200).json({ message, searchedDocument });
       })
       .catch(error => res.status(400).send(error));
   }

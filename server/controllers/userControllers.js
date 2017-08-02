@@ -6,6 +6,9 @@ const Document = require('../models').Document;
 
 export default {
   signUp: (req, res) => {
+    if (req.body.name === undefined || req.body.email === undefined || req.body.password === undefined) {
+      return res.status(400).send({ message: 'Please crosscheck your information' });
+    }
     User.findAll({
       where: {
         email: req.body.email
@@ -49,6 +52,9 @@ export default {
   },
 
   login: (req, res) => {
+    if (req.body.password === undefined) {
+      return res.status(404).json({ message: 'Please input a password' });
+    }
     User.findAll({
       where: {
         email: req.body.email
@@ -83,10 +89,8 @@ export default {
         as: 'Documents',
       }],
     };
-    if (req.query.limit && req.query.offset) {
-      query.limit = req.query.limit;
-      query.offset = req.query.offset;
-    }
+    query.limit = req.query.limit || 10;
+    query.offset = req.query.offset || 0;
     User
       .findAll(query)
       .then(users => res.status(200).send(users))
@@ -105,10 +109,12 @@ export default {
         include: [{
           model: Document,
           as: 'Documents',
-        }]
+          attributes: ['title', 'content', 'access']
+        }],
+        attributes: ['name', 'email']
       })
       .then((user) => {
-        return res.status(200).send(user);
+        res.status(200).send(user);
       })
       .catch(error => res.status(400).send(error));
   },
@@ -117,7 +123,7 @@ export default {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
       return res.status(400).send({
-        message: 'Invalid command'
+        message: 'You cannot edit this users information'
       });
     }
     User
@@ -174,9 +180,14 @@ export default {
       .findAll(query)
       .then((user) => {
         if (user[0] === undefined) {
-          return res.status(404).json({ message: 'this user doesnt exist' });
+          return res.status(404).json({ message: 'This user doesn\'t exist' });
         }
-        return res.status(200).json(user[0].dataValues);
+        const searchedUser = {
+          name: user[0].dataValues.name,
+          email: user[0].dataValues.email,
+        };
+        const message = 'User found successfully';
+        return res.status(200).json({ message, searchedUser });
       })
       .catch(error => res.status(400).send(error));
   },
@@ -192,7 +203,7 @@ export default {
             .update({
               roleId: req.body.role || user.roleId,
             })
-            .then(() => res.status(200).send(user));
+            .then(() => res.status(200).json({ message: 'Role changed', user }));
         } else {
           return res.status(404).json({ message: 'invalid command' });
         }

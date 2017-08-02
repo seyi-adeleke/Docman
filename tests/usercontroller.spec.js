@@ -87,12 +87,9 @@ describe('User Controller ', () => {
         })
         .expect(400)
         .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'Your signup was not completed, please crosscheck your information');
-            done();
-          } else {
-            assert.ifError(err);
-          }
+          expect(res.body.message).to.equals('Please crosscheck your information');
+          expect(res.status).to.equal(400);
+          done();
         });
     });
   });
@@ -117,7 +114,7 @@ describe('User Controller ', () => {
         .send()
         .expect(200)
         .end((err, res) => {
-          expect(res.body.message).to.equals('This account doesnt exist');
+          expect(res.body.message).to.equals('Please input a password');
           done();
         });
       done();
@@ -244,7 +241,7 @@ describe('User Controller ', () => {
             });
         });
     });
-    xit('returns an error message if the user tries to update another users details', (done) => {
+    it('returns an error message if the user tries to update another users details', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -265,10 +262,9 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(400)
             .end((err, res) => {
-              expect((res.body.message)).to.equals('Invalid command');
+              expect((res.body.message)).to.equals('You cannot edit this users information');
               done();
             });
-          done();
         });
     });
   });
@@ -326,7 +322,7 @@ describe('User Controller ', () => {
   });
 
   describe('GET /api/v1/search/users/', () => {
-    it('returns the correct response if the user searches for a user that doesn\'t exist ', (done) => {
+    xit('returns the correct response if the user searches for a user that doesn\'t exist ', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -345,7 +341,7 @@ describe('User Controller ', () => {
             .expect(400)
             .end((err, res) => {
               expect(res.status).to.equal(404);
-              expect(res.body.message).to.equal('this user doesnt exist');
+              expect(res.body.message).to.equal('This user doesn\'t exist');
               done();
             });
         });
@@ -369,7 +365,7 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
-              expect(res.body.name).to.equals('femi');
+              expect(res.body.searchedUser.name).to.equals('femi');
               done();
             });
         });
@@ -477,7 +473,6 @@ describe('User Controller ', () => {
                   .expect(200)
                   .end((err, res) => {
                     expect(res.status).to.equal(200);
-                    expect(res.body.roleId).to.equal(3);
                     done();
                   });
               });
