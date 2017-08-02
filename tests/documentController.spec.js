@@ -318,10 +318,10 @@ describe('Document Controller ', () => {
             .set('Authorization', `${token}`)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .expect(404)
+            .expect(400)
             .end((err, res) => {
-              expect((res.body.message)).to.equals('this document doesnt exist');
-              expect(res.status).to.equal(404);
+              expect((res.body.message)).to.equals('Please cross check your request');
+              expect(res.status).to.equal(400);
               done();
             });
         });
@@ -369,10 +369,10 @@ describe('Document Controller ', () => {
                     .set('Authorization', `${newToken}`)
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .expect(404)
+                    .expect(400)
                     .end((err, res) => {
-                      expect((res.body.message)).to.equals('you cannot edit this document');
-                      expect(res.status).to.equal(404);
+                      expect((res.body.message)).to.equals('Please cross check your request');
+                      expect(res.status).to.equal(400);
                       done();
                     });
                 });

@@ -2,6 +2,8 @@ import express from 'express';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import http from 'http';
+import path from 'path';
+
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,6 +19,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./routes')(app);
+
+app.use(express.static(path.resolve(__dirname, './../public')));
+
+app.get('/', (request, response) => {
+  response.sendFile(path.resolve(__dirname, './../public', 'index.html'));
+});
 
 app.get('*', (req, res) => res.status(200).send({
   message: 'welcome to docman',
