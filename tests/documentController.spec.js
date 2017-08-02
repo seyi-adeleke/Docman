@@ -15,6 +15,17 @@ const app = require('../build/app').default;
 let token;
 let newToken;
 
+describe('App', () => {
+  it('responds to a request', (done) => {
+    request(app)
+      .get('/api/v1')
+      .end((err, res) => {
+        expect(res.body.message).to.equal('welcome to docman');
+        done();
+      });
+  });
+});
+
 describe('Document Controller ', () => {
   beforeEach((done) => {
     Role.destroy({
