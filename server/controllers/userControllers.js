@@ -1,5 +1,7 @@
+import validator from 'validator';
 import bcrypt from '../utilities/bcrypt';
 import paginate from '../utilities/paginate';
+
 
 const User = require('../models').User;
 const Document = require('../models').Document;
@@ -155,6 +157,9 @@ export default {
  * @return {object} Json data
  */
   updateUser: (req, res) => {
+    if (req.body.email !== undefined && !validator.isEmail(req.body.email)) {
+      return res.status(400).send({ message: 'Please use a valid email' });
+    }
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
       return res.status(400).send({
@@ -169,7 +174,13 @@ export default {
             name: req.body.name || user.name,
             email: req.body.email || user.email,
           })
-          .then(() => res.status(200).send(user))
+          .then(() => {
+            const updatedUser = {
+              name: user.name,
+              email: user.email
+            };
+            res.status(200).send({ message: 'User updated succesfully', updatedUser });
+          })
           .catch(error => res.status(400).send(error));
       })
       .catch(error => res.status(400).send(error));
@@ -184,6 +195,9 @@ export default {
  */
   deleteUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
+    if (id === req.decoded.id) {
+      return res.status(400).send({ message: 'The admin cannot delete himself' });
+    }
     User
       .findById(id)
       .then((user) => {
@@ -203,7 +217,7 @@ export default {
  */
   searchUserDocuments: (req, res) => {
     const id = parseInt(req.params.id, 10);
-    if (id !== req.decoded.id) {
+    if (id !== req.decoded.id && !req.isAdmin) {
       return res.send({
         message: 'you dont have access to these documents'
       });
@@ -217,6 +231,9 @@ export default {
         }]
       })
       .then((user) => {
+        if (user.Documents.length === 0) {
+          return res.status(200).send({ message: 'This user does not have any documents' });
+        }
         res.status(200).send(user.Documents);
       })
       .catch(error => res.status(400).send(error));

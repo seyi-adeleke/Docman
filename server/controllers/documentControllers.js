@@ -30,7 +30,11 @@ export default {
       .create(body)
       .then(response => res.status(201).send({
         message: 'Document created succesfully',
-        response
+        document: {
+          title: response.title,
+          content: response.content,
+          access: response.access
+        }
       }))
       .catch(error => res.status(400).send(error));
   },
@@ -68,15 +72,21 @@ export default {
       .findById(req.params.id)
       .then((document) => {
         if (!document) {
-          return res.status(404).json({ message: 'This documents doesn\'t exist' });
-        } else if (req.isAdmin) {
+          return res.status(404).json({ message: 'This document doesn\'t exist' });
+        }
+        const foundDocument = {
+          title: document.title,
+          content: document.content,
+          access: document.access
+        };
+        if (req.isAdmin) {
           return res.status(200).send(document);
         } else if (document.access === 'public') {
-          return res.status(200).json({ message: 'Document Found succesfully', document });
+          return res.status(200).json({ message: 'Document Found succesfully', foundDocument });
         } else if (document.access === 'private' && req.decoded.id !== document.userId) {
           return res.status(404).json({ message: 'You do not have access to this document' });
         } else if (document.access === 'role' && req.decoded.roleId === 3) {
-          return res.status(200).json({ message: 'Document Found succesfully', document });
+          return res.status(200).json({ message: 'Document Found succesfully', foundDocument });
         }
       })
       .catch(error => res.status(400).send(error));
@@ -90,6 +100,9 @@ export default {
   * @return {object} Json data
 */
   updateDocument: (req, res) => {
+    if (req.body.title === undefined && req.body.content === undefined && req.body.access === undefined) {
+      return res.status(400).send({ message: 'Please cross check your request' });
+    }
     Document
       .findById(req.params.id)
       .then((document) => {

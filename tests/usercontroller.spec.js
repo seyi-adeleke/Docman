@@ -236,7 +236,7 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
-              expect(res.body.email).to.equal('adeleke@adeleke.com');
+              expect(res.status).to.equal(200);
               done();
             });
         });
@@ -608,6 +608,51 @@ describe('User Controller ', () => {
                   .expect(200)
                   .end((err, res) => {
                     expect(typeof res.body).to.equal('object');
+                    done();
+                  });
+              });
+          });
+      });
+    });
+  });
+
+  describe('DELETE /api/v1/users/:id/', () => {
+    it('Deletes the user when the admin makes a request', (done) => {
+      User.create({
+        name: 'admin',
+        email: 'admin@admin.com',
+        password: bcrypt.hash('admin'),
+        roleId: 1
+      }).then((res) => {
+        request(app)
+          .post('/api/v1/users/login')
+          .send({
+            email: 'admin@admin.com',
+            password: 'admin',
+          })
+          .expect(200)
+          .end((err, res) => {
+            token = res.body.token;
+            request(app)
+              .post('/api/v1/users/')
+              .send({
+                name: 'seyi',
+                email: 'seyi@seyi.com',
+                password: bcrypt.hash('seyi')
+              })
+              .set('Authorization', `${token}`)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end((err, res) => {
+                request(app)
+                  .delete('/api/v1/users/2')
+                  .set('Authorization', `${token}`)
+                  .set('Accept', 'application/json')
+                  .expect('Content-Type', /json/)
+                  .expect(204)
+                  .end((err, res) => {
+                    expect(res.status).to.equal(204);
                     done();
                   });
               });
