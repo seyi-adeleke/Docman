@@ -275,6 +275,9 @@ export default {
  */
   changeRole: (req, res) => {
     const id = parseInt(req.params.id, 10);
+    if (id === 1) {
+      return res.status(400).send({ message: 'Admins cannot change their role' });
+    }
     User
       .findById(id)
       .then((user) => {
