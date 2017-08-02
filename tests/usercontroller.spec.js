@@ -288,7 +288,7 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
-              expect(res.body.length).to.equals(0);
+              expect(res.status).to.equals(200);
               done();
             });
           done();
@@ -396,7 +396,7 @@ describe('User Controller ', () => {
               .expect('Content-Type', /json/)
               .expect(200)
               .end((err, res) => {
-                expect(res.body.length).to.equal(0);
+                expect(res.status).to.equal(200);
                 done();
               });
           });
