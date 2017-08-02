@@ -94,7 +94,7 @@ describe('User Controller ', () => {
     });
   });
 
-  describe('POST /api/v1/uses/login', () => {
+  describe('POST /api/v1/users/login', () => {
     it('responds with a 200 to a valid login request', (done) => {
       request(app)
         .post('/api/v1/users/login')
@@ -123,6 +123,17 @@ describe('User Controller ', () => {
 
 
   describe('GET /api/v1/users/', () => {
+    it('returns an error message when an unathenticated user tries to access the route', (done) => {
+      request(app)
+        .get('/api/v1/users/')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect((res.body.message)).to.equals('You are not logged in');
+          done();
+        });
+    });
     it('gets a list of all users when the admin makes a request', (done) => {
       User.create({
         name: 'admin',
@@ -160,9 +171,90 @@ describe('User Controller ', () => {
           });
       });
     });
+    it('returns an error message when a user with an incorrect token tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .get('/api/v1/users/')
+            .set('Authorization', 'token')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('There was an error processing your request');
+              done();
+            });
+        });
+    });
+    it('returns an error message if a user that is not an admin tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .get('/api/v1/users/')
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('You do not have access to this route');
+              done();
+            });
+        });
+    });
   });
 
   describe('GET /api/v1/users/:id', () => {
+    it('returns an error message when an unathenticated user tries to access the route', (done) => {
+      request(app)
+        .get('/api/v1/users/1')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect((res.body.message)).to.equals('You are not logged in');
+          done();
+        });
+    });
+    it('returns an error message when a user with an incorrect token tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .get('/api/v1/users/1')
+            .set('Authorization', 'token')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('There was an error processing your request');
+              done();
+            });
+        });
+    });
     it('returns a particular user based on the ID provided in params', (done) => {
       request(app)
         .post('/api/v1/users')
