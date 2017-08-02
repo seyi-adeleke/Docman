@@ -6,6 +6,13 @@ const Document = require('../models').Document;
 
 
 export default {
+  /**
+ * signUp: Create a new user document
+ * @function signUp
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data and a token
+ */
   signUp: (req, res) => {
     if (req.body.name === undefined || req.body.email === undefined || req.body.password === undefined) {
       return res.status(400).send({ message: 'Please crosscheck your information' });
@@ -52,6 +59,13 @@ export default {
       );
   },
 
+  /**
+ * login: Logs a user in
+ * @function login
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data and a token
+ */
   login: (req, res) => {
     if (req.body.password === undefined) {
       return res.status(404).json({ message: 'Please input a password' });
@@ -83,6 +97,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * allUsers: return a paginated json object containing all users
+ * @function allUsers
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   allUsers: (req, res) => {
     const query = {
     };
@@ -97,6 +118,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * getUser: Get a user
+ * @function getUser
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   getUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id && !req.isAdmin) {
@@ -119,6 +147,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * updateUser: This updates a users information
+ * @function updateUser
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   updateUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
@@ -140,6 +175,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * deleteUser: Delete a user
+ * @function deleteUser
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   deleteUser: (req, res) => {
     const id = parseInt(req.params.id, 10);
     User
@@ -152,6 +194,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * searchUserDocuments:Searches for all documents belonging to a user
+ * @function searchUserDocuments
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   searchUserDocuments: (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id) {
@@ -173,6 +222,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * searchUsers: Search for a particular user
+ * @function searchUsers
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   searchUsers: (req, res) => {
     const query = {
       where: { name: req.query.q },
@@ -193,6 +249,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+ * changeRole: Changes a particular users role
+ * @function changeRole
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   changeRole: (req, res) => {
     const id = parseInt(req.params.id, 10);
     User
