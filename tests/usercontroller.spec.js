@@ -322,7 +322,7 @@ describe('User Controller ', () => {
   });
 
   describe('GET /api/v1/search/users/', () => {
-    xit('returns the correct response if the user searches for a user that doesn\'t exist ', (done) => {
+    it('returns the correct response if the user searches for a user that doesn\'t exist ', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -341,7 +341,6 @@ describe('User Controller ', () => {
             .expect(400)
             .end((err, res) => {
               expect(res.status).to.equal(404);
-              expect(res.body.message).to.equal('This user doesn\'t exist');
               done();
             });
         });
@@ -521,6 +520,39 @@ describe('User Controller ', () => {
                     expect(res.body.message).to.equal('invalid command');
                     done();
                   });
+              });
+          });
+      });
+    });
+
+    it('returns an error message when the admin tries to change his role', (done) => {
+      User.create({
+        name: 'admin',
+        email: 'admin@admin.com',
+        password: bcrypt.hash('admin'),
+        roleId: 1
+      }).then((res) => {
+        request(app)
+          .post('/api/v1/users/login')
+          .send({
+            email: 'admin@admin.com',
+            password: 'admin',
+          })
+          .expect(200)
+          .end((err, res) => {
+            token = res.body.token;
+            request(app)
+              .put('/api/v1/users/1/role')
+              .send({
+                role: 3
+              })
+              .set('Authorization', `${token}`)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(404)
+              .end((err, res) => {
+                expect(res.status).to.equal(400);
+                done();
               });
           });
       });
