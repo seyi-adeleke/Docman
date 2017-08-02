@@ -3,6 +3,13 @@ import paginate from '../utilities/paginate';
 const Document = require('../models').Document;
 
 export default {
+  /**
+   * create: This enables registered users create documents
+   * @function create
+   * @param {object} req request
+   * @param {object} res response
+   * @return {object} Json data
+   */
   create: (req, res) => {
     if (req.body.title === undefined || req.body.content === undefined) {
       return res.status(400).send({ message: 'Please input a title or some content' });
@@ -23,10 +30,17 @@ export default {
       .create(body)
       .then(response => res.status(201).send({
         message: 'Document created succesfully',
-        response }))
+        response
+      }))
       .catch(error => res.status(400).send(error));
   },
-
+  /**
+    *list: This lists out all documents in the database
+    * @function list
+    * @param {object} req request
+    * @param {object} res response
+    * @return {object} Json data 
+    */
   list: (req, res) => {
     const query = {
       where: {}
@@ -42,6 +56,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+   * findDocument: This finds a particular users document
+   * @function findDocument
+   * @param {object} req
+   * @param {object} res
+   * @return {object} Json data
+   */
   findDocument: (req, res) => {
     Document
       .findById(req.params.id)
@@ -61,7 +82,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
-
+/**
+  * updateDocument: This updates a document
+  * @function updateDocument
+  * @param {object} req
+  * @param {object} res
+  * @return {object} Json data
+*/
   updateDocument: (req, res) => {
     Document
       .findById(req.params.id)
@@ -90,6 +117,13 @@ export default {
       .catch(error => res.status(400).send(error));
   },
 
+/**
+   * deleteDocument: This deletes a users documents
+   * @function deleteDocument
+   * @param {object} req
+   * @param {object} res
+   * @return {null}
+   */
   deleteDocument: (req, res) => {
     Document
       .findById(req.params.id)
@@ -107,7 +141,13 @@ export default {
       })
       .catch(error => res.status(400).send(error));
   },
-
+/**
+ * searchDocument: This searches for a particular document
+ * @function searchDocuments
+ * @param {object} req
+ * @param {object} res
+ * @return {object} Json data
+ */
   searchDocuments: (req, res) => {
     let query;
     if (req.isAdmin) {
