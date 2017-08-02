@@ -38,7 +38,7 @@ gulp.task('test', () => {
 });
 
 gulp.task('coverage', (cb) => {
-  gulp.src('./build/controllers/*.js')
+  gulp.src('./build/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {

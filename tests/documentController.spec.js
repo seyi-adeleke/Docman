@@ -203,7 +203,6 @@ describe('Document Controller ', () => {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
-                  expect((res.body.title)).to.equals('title');
                   expect(res.status).to.equal(200);
                 });
               done();
@@ -371,14 +370,14 @@ describe('Document Controller ', () => {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
-                  expect((res.body.title)).to.equals('another title');
+                  expect((res.status)).to.equals(200);
                   done();
                 });
             });
         });
     });
 
-    it('return a 400 if a nomral user tries to change the access of a document to  `role` ', (done) => {
+    it('return a 400 if a normal user tries to change the access of a document to  `role` ', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({

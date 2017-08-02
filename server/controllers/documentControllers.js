@@ -21,7 +21,9 @@ export default {
     }
     Document
       .create(body)
-      .then(response => res.status(201).send(response))
+      .then(response => res.status(201).send({
+        message: 'Document created succesfully',
+        response }))
       .catch(error => res.status(400).send(error));
   },
 
@@ -49,13 +51,13 @@ export default {
         if (!document) {
           return res.status(404).json({ message: 'This documents doesn\'t exist' });
         } else if (req.isAdmin) {
-          return res.status(200).json(document);
+          return res.status(200).send(document);
         } else if (document.access === 'public') {
-          return res.status(200).json(document);
+          return res.status(200).json({ message: 'Document Found succesfully', document });
         } else if (document.access === 'private' && req.decoded.id !== document.userId) {
           return res.status(404).json({ message: 'You do not have access to this document' });
         } else if (document.access === 'role' && req.decoded.roleId === 3) {
-          return res.status(200).json(document);
+          return res.status(200).json({ message: 'Document Found succesfully', document });
         }
       })
       .catch(error => res.status(400).send(error));
@@ -66,6 +68,11 @@ export default {
     Document
       .findById(req.params.id)
       .then((document) => {
+        const updatedDocument = {
+          title: req.body.title,
+          content: req.body.content,
+          access: req.body.access
+        };
         if (req.body.access === 'role' && req.decoded.roleId === 2) {
           return res.status(400).send({ message: 'You cannot create role based documents' });
         }
@@ -80,7 +87,7 @@ export default {
             content: req.body.content || document.content,
             access: req.body.access || document.access
           })
-          .then(() => res.status(200).send(document));
+          .then(() => res.status(200).json({ message: 'Document updated', updatedDocument }));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -121,10 +128,15 @@ export default {
     Document
       .findAll(query)
       .then((document) => {
+        const message = 'Document Found';
         if (document[0] === undefined) {
           return res.status(404).json({ message: 'This document doesnt exist' });
         }
-        return res.status(200).json(document[0].dataValues);
+        const searchedDocument = {
+          title: document[0].dataValues.title,
+          content: document[0].dataValues.content
+        };
+        return res.status(200).json({ message, searchedDocument });
       })
       .catch(error => res.status(400).send(error));
   }

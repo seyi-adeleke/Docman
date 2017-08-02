@@ -10,7 +10,7 @@
     "test": "gulp dev &&  gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "coverage": "gulp coverage",
     "config-prod-db":"NODE_ENV=production sequelize db:migrate && npm run seed",
-    "seed": "sequelize db:seed:all"
+    "seed": "NODE_ENV=production sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
