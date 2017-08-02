@@ -1,4 +1,4 @@
-import db from '../models/index';
+import paginate from '../utilities/paginate';
 
 const Document = require('../models').Document;
 
@@ -28,19 +28,17 @@ export default {
   },
 
   list: (req, res) => {
-    let query;
-    const limit = parseInt(req.query.limit, 10);
-    const offset = parseInt(req.query.offset, 10);
-    if (limit && offset) {
-      query.limit = limit;
-      query.offset = offset;
-    }
-    query = {
+    const query = {
       where: {}
     };
+    query.limit = Math.abs(req.query.limit) || 10;
+    query.offset = Math.abs(req.query.offset) || 0;
     Document
       .findAll(query)
-      .then(documents => res.status(200).send(documents))
+      .then((documents) => {
+        const count = documents.length;
+        paginate.information(count, query.limit, query.offset, documents, res);
+      })
       .catch(error => res.status(400).send(error));
   },
 

@@ -1,4 +1,5 @@
 import bcrypt from '../utilities/bcrypt';
+import paginate from '../utilities/paginate';
 
 const User = require('../models').User;
 const Document = require('../models').Document;
@@ -84,16 +85,15 @@ export default {
 
   allUsers: (req, res) => {
     const query = {
-      include: [{
-        model: Document,
-        as: 'Documents',
-      }],
     };
-    query.limit = req.query.limit || 10;
-    query.offset = req.query.offset || 0;
+    query.limit = Math.abs(req.query.limit) || 10;
+    query.offset = Math.abs(req.query.offset) || 0;
     User
       .findAll(query)
-      .then(users => res.status(200).send(users))
+      .then((users) => {
+        const count = users.length;
+        paginate.information(count, query.limit, query.offset, users, res);
+      })
       .catch(error => res.status(400).send(error));
   },
 
@@ -164,6 +164,7 @@ export default {
         include: [{
           model: Document,
           as: 'Documents',
+          attributes: ['title', 'content', 'access']
         }]
       })
       .then((user) => {
