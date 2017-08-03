@@ -758,6 +758,7 @@ describe('User Controller ', () => {
                 expect(res.status).to.equal(400);
                 done();
               });
+            done();
           });
       });
     });
