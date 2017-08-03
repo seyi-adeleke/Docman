@@ -16,8 +16,8 @@ module.exports = {
         allowNull: false,
       },
       access: {
-        type: Sequelize.ENUM('Public', 'Private'),
-        defaultvalue: 'Public',
+        type: Sequelize.ENUM('public', 'private', 'role'),
+        defaultvalue: 'public',
       },
       roleId: {
         type: Sequelize.INTEGER,

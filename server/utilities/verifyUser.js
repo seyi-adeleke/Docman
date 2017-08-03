@@ -1,5 +1,12 @@
 import jwt from 'jsonwebtoken';
 
+/**
+ * @function isLoggedIn - checks if a user is logged in
+ * @param {object} req - the request
+ * @param {object} res - the response
+ * @param {function} next
+ * @return {void}
+ */
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });
@@ -16,7 +23,13 @@ module.exports.isLoggedIn = (req, res, next) => {
     next();
   });
 };
-
+/**
+ * @function isAdmin - checks if a user is an admin
+ * @param {object} req - the request
+ * @param {object} res - the response
+ * @param {function} next
+ * @return {void}
+ */
 module.exports.isAdmin = (req, res, next) => {
   if (!req.headers.authorization) {
     return res.send({ message: 'You are not logged in' });

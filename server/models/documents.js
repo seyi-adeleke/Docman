@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     access: {
-      type: DataTypes.ENUM('Public', 'Private'),
-      defaultValue: 'Public',
+      type: DataTypes.ENUM('public', 'private', 'role'),
+      defaultValue: 'public',
     },
     userId: {
       type: DataTypes.INTEGER,
