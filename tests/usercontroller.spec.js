@@ -79,6 +79,33 @@ describe('User Controller ', () => {
         });
     });
 
+    it('returns an error message if a user tries to signup twice', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .post('/api/v1/users')
+            .send({
+              name: 'ade',
+              password: 'seyi',
+              email: 'seyi@seyi.com',
+              roleId: 2
+            })
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('This user exists');
+              done();
+            });
+        });
+    });
+
     it('throws a 400 for incorrect sign up info', (done) => {
       request(app)
         .post('/api/v1/users')
@@ -94,7 +121,7 @@ describe('User Controller ', () => {
     });
   });
 
-  describe('POST /api/v1/uses/login', () => {
+  describe('POST /api/v1/users/login', () => {
     it('responds with a 200 to a valid login request', (done) => {
       request(app)
         .post('/api/v1/users/login')
@@ -119,10 +146,45 @@ describe('User Controller ', () => {
         });
       done();
     });
+    it('responds with an error message if the email/password is incorrect', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: bcrypt.hash('seyi'),
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .post('/api/v1/users/login')
+            .send({
+              password: 'sey',
+              email: 'seyi@seyi.com',
+            })
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('email/password incorrect');
+              done();
+            });
+        });
+    });
   });
 
 
   describe('GET /api/v1/users/', () => {
+    it('returns an error message when an unathenticated user tries to access the route', (done) => {
+      request(app)
+        .get('/api/v1/users/')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect((res.body.message)).to.equals('You are not logged in');
+          done();
+        });
+    });
     it('gets a list of all users when the admin makes a request', (done) => {
       User.create({
         name: 'admin',
@@ -160,9 +222,90 @@ describe('User Controller ', () => {
           });
       });
     });
+    it('returns an error message when a user with an incorrect token tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .get('/api/v1/users/')
+            .set('Authorization', 'token')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('There was an error processing your request');
+              done();
+            });
+        });
+    });
+    it('returns an error message if a user that is not an admin tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'ade',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .get('/api/v1/users/')
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('You do not have access to this route');
+              done();
+            });
+        });
+    });
   });
 
   describe('GET /api/v1/users/:id', () => {
+    it('returns an error message when an unathenticated user tries to access the route', (done) => {
+      request(app)
+        .get('/api/v1/users/1')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect((res.body.message)).to.equals('You are not logged in');
+          done();
+        });
+    });
+    it('returns an error message when a user with an incorrect token tries to access the route', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          request(app)
+            .get('/api/v1/users/1')
+            .set('Authorization', 'token')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('There was an error processing your request');
+              done();
+            });
+        });
+    });
     it('returns a particular user based on the ID provided in params', (done) => {
       request(app)
         .post('/api/v1/users')
@@ -267,10 +410,36 @@ describe('User Controller ', () => {
             });
         });
     });
+    it('returns an error message if the user tries to update their email with an invalid value', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'test',
+          password: 'test',
+          email: 'test@test.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .put('/api/v1/users/1')
+            .send({
+              email: 'adeleke.com',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect(400)
+            .end((err, res) => {
+              expect((res.body.message)).to.equals('Please use a valid email');
+              done();
+            });
+        });
+    });
   });
 
   describe('GET /api/v1/users/:id/documents', () => {
-    it('searches for a users documents', (done) => {
+    it('Returns a message if the user doesnt have any documents', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -292,6 +461,41 @@ describe('User Controller ', () => {
               done();
             });
           done();
+        });
+    });
+
+    it('Returns a users documents', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'test',
+          password: 'test',
+          email: 'test@test.com',
+          roleId: 2
+        })
+        .expect(204)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents/')
+            .send({
+              title: 'title',
+              content: 'content',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .end((err, res) => {
+              request(app)
+                .get('/api/v1/users/1/documents')
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect(200)
+                .end((err, res) => {
+                  expect(res.status).to.equals(200);
+                  done();
+                });
+            });
         });
     });
 
@@ -554,6 +758,7 @@ describe('User Controller ', () => {
                 expect(res.status).to.equal(400);
                 done();
               });
+            done();
           });
       });
     });
