@@ -14,7 +14,8 @@ module.exports.isLoggedIn = (req, res, next) => {
   const token = (req.headers.authorization);
   jwt.verify(token, 'secret', (error, decoded) => {
     if (error) {
-      return res.send({ message: 'There was an error processing your request' });
+      return res
+        .send({ message: 'There was an error processing your request' });
     }
     req.decoded = decoded;
     if (req.decoded.roleId === 1) {
@@ -23,6 +24,7 @@ module.exports.isLoggedIn = (req, res, next) => {
     next();
   });
 };
+
 /**
  * @function isAdmin - checks if a user is an admin
  * @param {object} req - the request
@@ -38,7 +40,8 @@ module.exports.isAdmin = (req, res, next) => {
 
   jwt.verify(token, 'secret', (error, decoded) => {
     if (error) {
-      return res.send({ message: 'There was an error processing your request' });
+      return res
+        .send({ message: 'There was an error processing your request' });
     }
     req.decoded = decoded;
     if (req.decoded.roleId !== 1) {
