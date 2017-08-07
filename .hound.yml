@@ -1,0 +1,3 @@
+eslint:
+  enabled: false
+  config_file: .eslintrc

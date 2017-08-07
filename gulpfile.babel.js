@@ -42,7 +42,7 @@ gulp.task('coverage', (cb) => {
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('./tests/*.js')
+      gulp.src('./server/tests/*.js')
         .pipe(babel())
         .pipe(injectModules())
         .pipe(jasmineNode())

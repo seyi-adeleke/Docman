@@ -10,6 +10,7 @@ module.exports = {
       title: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       content: {
         type: Sequelize.TEXT,
@@ -39,11 +40,11 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       }
     });
   },

@@ -11,7 +11,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          isEmail: true,
+        }
       },
       password: {
         type: Sequelize.STRING
@@ -27,11 +32,11 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       }
     });
   },

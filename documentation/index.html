@@ -1,0 +1,854 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>API Reference</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .cd {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all.js"></script>
+  </head>
+
+  <body class="index" data-languages="[&quot;javascript&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" alt="Navbar" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="images/logo.png" class="logo" alt="Logo" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="javascript">javascript</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc" class="toc-list-h1">
+          <li>
+            <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+          </li>
+          <li>
+            <a href="#users" class="toc-h1 toc-link" data-title="Users">Users</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#login-user" class="toc-h2 toc-link" data-title="Users">Login User</a>
+                  </li>
+                  <li>
+                    <a href="#create-user" class="toc-h2 toc-link" data-title="Users">Create User</a>
+                  </li>
+                  <li>
+                    <a href="#list-users" class="toc-h2 toc-link" data-title="Users">List Users</a>
+                  </li>
+                  <li>
+                    <a href="#get-user" class="toc-h2 toc-link" data-title="Users">Get User</a>
+                  </li>
+                  <li>
+                    <a href="#edit-user" class="toc-h2 toc-link" data-title="Users">Edit User</a>
+                  </li>
+                  <li>
+                    <a href="#delete-user" class="toc-h2 toc-link" data-title="Users">Delete User</a>
+                  </li>
+                  <li>
+                    <a href="#search-users" class="toc-h2 toc-link" data-title="Users">Search Users</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#documents" class="toc-h1 toc-link" data-title="Documents">Documents</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#create-document" class="toc-h2 toc-link" data-title="Documents">Create  Document</a>
+                  </li>
+                  <li>
+                    <a href="#all-documents" class="toc-h2 toc-link" data-title="Documents">All Documents</a>
+                  </li>
+                  <li>
+                    <a href="#get-document" class="toc-h2 toc-link" data-title="Documents">Get Document</a>
+                  </li>
+                  <li>
+                    <a href="#edit-document" class="toc-h2 toc-link" data-title="Documents">Edit Document</a>
+                  </li>
+                  <li>
+                    <a href="#delete-document" class="toc-h2 toc-link" data-title="Documents">Delete Document</a>
+                  </li>
+                  <li>
+                    <a href="#get-user-documents" class="toc-h2 toc-link" data-title="Documents">Get User Documents</a>
+                  </li>
+                  <li>
+                    <a href="#search-documents" class="toc-h2 toc-link" data-title="Documents">Search Documents</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#administrators" class="toc-h1 toc-link" data-title="Administrators">Administrators</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#change-user-role" class="toc-h2 toc-link" data-title="Administrators">Change User Role</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+          </li>
+      </div>
+        <ul class="toc-footer">
+            <li><a href='https://seyiadeleke.herokuapp.com'>Built By Seyi Adeleke</a></li>
+            <li><a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='introduction'>Introduction</h1>
+<p>Welcome to the Docman Api. Docman is an Api for managing documents. Implemented with an Admin, Editors and users. It provides all that is essential for a management system, users can create documents complete with roles and privileges. Each document defines its access right and the date which it was created.</p>
+<h1 id='authentication'>Authentication</h1>
+<p>All routes apart from <code>/api/v1/users</code> and <code>/api/v1/users/login</code> require a jwt token to be accessed. The token is generated after a successful login or signup. All tokens are valid for 24 hours. Set the header in your <code>API</code> client with the token provided.</p>
+
+<p><code>Authorization: token</code></p>
+<h1 id='users'>Users</h1><h2 id='login-user'>Login User</h2>
+<p>This Route logs a user in</p>
+
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"tolu@gmail.com"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"tolu"</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Login successful"</span>
+  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGVJZCI6MSwiaWF0IjoxNDk2MDA5MjQxLCJleHAiOjE0OTY2MTQwNDF9.hkWYITDnqi7paQjhkqhh5Fe0yAiPf34Ffji9jKHQ_Ik"</span><span class="p">,</span>
+
+<span class="p">}</span>
+</code></pre><h3 id='request'>Request</h3>
+<ul>
+<li>Endpoint: POST: <code>api/v1/users/login</code></li>
+</ul>
+<h3 id='response'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='create-user'>Create User</h2>
+<p>This route creates a new user</p>
+
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"ade"</span><span class="p">,</span>
+  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"ade@yahoo.com"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"ade"</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Registration Was Succesfull, You have been logged in"</span><span class="p">,</span>
+  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-2'>Request</h3>
+<ul>
+<li>Endpoint: POST: <code>api/v1/users</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h3 id='response-2'>Response</h3>
+<ul>
+<li>Status: <code>201: Created</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='list-users'>List Users</h2>
+<p>This is an admin only route that returns an array of all currently signed up users</p>
+
+<blockquote>
+<p>Sample JSON structured response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Data found"</span><span class="p">,</span>
+    <span class="s2">"content"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"seyi"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seyi@seyi.com"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-3'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/users</code></li>
+<li>Requires: Admin Authentication</li>
+</ul>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>limit</td>
+<td>10</td>
+<td>Sets the limit.</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>0</td>
+<td>Sets the offset.</td>
+</tr>
+</tbody></table>
+<h3 id='response-3'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='get-user'>Get User</h2>
+<p>This route returns the information of the currently signed in user</p>
+
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"seyi"</span><span class="p">,</span>
+    <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seyi@seyi.com"</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-4'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/users/:id</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-4'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='edit-user'>Edit User</h2>
+<p>This route allows the currently logged in user update their <code>email</code>, <code>name</code> and <code>password</code></p>
+
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"new name"</span><span class="p">,</span>
+  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"new email"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"new password"</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User updated succesfully"</span><span class="p">,</span>
+    <span class="s2">"updatedUser"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"new name"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"new name"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-5'>Request</h3>
+<p>This is an admin only route that deletes an existing user</p>
+
+<ul>
+<li>Endpoint: PUT: <code>api/v1/users/:id</code></li>
+<li>Requires: Authentication</li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h3 id='response-5'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='delete-user'>Delete User</h2>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User has been deleted successfully"</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-6'>Request</h3>
+<ul>
+<li>Endpoint: DELETE: <code>api/v1/users/:id</code></li>
+<li>Requires: Admin Authentication</li>
+</ul>
+<h3 id='response-6'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='search-users'>Search Users</h2>
+<p>Searches for existing users</p>
+
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User found successfully"</span><span class="p">,</span>
+    <span class="s2">"searchedUser"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"ade"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"ade@ade.com"</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-7'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>/search/users</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='query-parameters-2'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>q</td>
+<td>&quot;&quot;</td>
+<td>Search query.</td>
+</tr>
+</tbody></table>
+<h3 id='response-7'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h1 id='documents'>Documents</h1><h2 id='create-document'>Create  Document</h2>
+<p>Creates a new document</p>
+
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A title"</span><span class="p">,</span>
+  <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span>
+  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"Public"</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document created succesfully"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"my document"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"createdOn"</span><span class="p">:</span> <span class="s2">"2017-08-07"</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request'>Request</h3>
+<ul>
+<li>Endpoint: POST: <code>api/v1/documents</code></li>
+</ul>
+<h3 id='notes'>Notes</h3>
+<ul>
+<li>Document access level is either <code>public</code>, <code>private</code> or <code>role</code>. </li>
+<li>Only Editors can create <code>role</code> access documents</li>
+</ul>
+<h3 id='response'>Response</h3>
+<ul>
+<li>Status: <code>201: Created</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='all-documents'>All Documents</h2>
+<p>Returns a json object of all viewable objects</p>
+
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Data found"</span><span class="p">,</span>
+    <span class="s2">"content"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"my document"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-07"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"User"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+                <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-07"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"User"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"seyi"</span><span class="p">,</span>
+                <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seyi@seyi.com"</span><span class="p">,</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-2'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/documents</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h3 id='notes-2'>Notes</h3>
+<ul>
+<li>The response is paginated by default with a limit of 10 and an offset of 0</li>
+<li>To specify pagination add <code>?={limit}&amp;offset={offset}</code> to the base url</li>
+</ul>
+<h3 id='response-2'>Response</h3>
+<ul>
+<li>Status: <code>200: Ok</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='get-document'>Get Document</h2>
+<p>Fetched the document that matches the id in the parameter. Private documents cannot be accessed in this way</p>
+
+<blockquote>
+<p>Sample JSON structured response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document Found succesfully"</span><span class="p">,</span>
+    <span class="s2">"foundDocument"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"seyi"</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"createdOn"</span><span class="p">:</span> <span class="s2">"2017-08-07"</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-3'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/documents/:id</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-3'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='edit-document'>Edit Document</h2>
+<p>This route allows the owner of a document update it</p>
+
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="nl">content</span><span class="p">:</span> <span class="s1">'some content goes heret'</span><span class="p">,</span>
+    <span class="nx">access</span><span class="p">:</span> <span class="s1">'role'</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document updated"</span><span class="p">,</span>
+    <span class="s2">"updatedDocument"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"role"</span><span class="p">,</span>
+        <span class="s2">"updatedOn"</span><span class="p">:</span> <span class="s2">"Mon, Aug 7th 2017, 12:00:00 am"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-4'>Request</h3>
+<ul>
+<li>Endpoint: PUT: <code>api/v1/documents/:id</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-4'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='delete-document'>Delete Document</h2>
+<p>This route allows the owner of a document to delete the document specified in the id</p>
+
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document has been deleted successfully"</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-5'>Request</h3>
+<ul>
+<li>Endpoint: Delete: <code>api/v1/documents/:id</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-5'>Response</h3>
+<ul>
+<li>Status: <code>204: Deleted</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='get-user-documents'>Get User Documents</h2>
+<p>Returns all documents belonging to the signed in user</p>
+
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some content goes here"</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"a new title"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"some new content"</span><span class="p">,</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre><h3 id='request-6'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>/api/v1/users/:id/documents</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-6'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h2 id='search-documents'>Search Documents</h2>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document Found"</span><span class="p">,</span>
+    <span class="s2">"searchedDocument"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"new title"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"new content"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-7'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/search/documents/?q={doctitle}</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>q</td>
+<td>&quot;&quot;</td>
+<td>Search query.</td>
+</tr>
+</tbody></table>
+<h3 id='response-7'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h1 id='administrators'>Administrators</h1>
+<aside class="notice">The administrator has access to all documents created and all users information(expept the password)
+The administrator has the power to assign the `Editor` role to a user as well as create another administrator.
+</aside>
+<h2 id='change-user-role'>Change User Role</h2>
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+  <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+ <span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Role changed"</span><span class="p">,</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"seyi"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"seyi@seyi.com"</span><span class="p">,</span>
+        <span class="s2">"roleId"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request'>Request</h3>
+<ul>
+<li>Endpoint: PUT: <code>/api/v1/users/:id/role</code></li>
+</ul>
+<h3 id='notes'>Notes</h3>
+<ul>
+<li><code>Admin</code> users have a role of <code>1</code></li>
+<li><code>Users</code> have a role of <code>2</code></li>
+<li><code>Editors</code> have a role of <code>3</code> </li>
+</ul>
+<h3 id='response'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<h1 id='errors'>Errors</h1>
+<aside class="notice">The developer has ensured all edge cases are adequately handled. If you come across any, please submit an issue in the github repo or better yet create a Pull request</aside>
+
+<p>The following status codes were implemented in this API :</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Response Ok</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+</tr>
+<tr>
+<td>204</td>
+<td>Deleted succesfully</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+</tr>
+</tbody></table>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="javascript">javascript</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>

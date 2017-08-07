@@ -1,7 +1,8 @@
 import validator from 'validator';
-import bcrypt from '../utilities/bcrypt';
-import paginate from '../utilities/paginate';
 
+import bcrypt from '../utilities/bcrypt';
+import utitlities from '../utilities/paginate';
+import validate from '../utilities/validateId';
 
 const User = require('../models').User;
 const Document = require('../models').Document;
@@ -9,15 +10,16 @@ const Document = require('../models').Document;
 
 export default {
   /**
- * signUp: Create a new user document
- * @function signUp
- * @param {object} req
- * @param {object} res
- * @return {object} Json data and a token
- */
+    * signUp: Create a new user document
+    * @function signUp
+    * @param {object} req
+    * @param {object} res
+    *  @return {object} Json data and a token
+    */
   signUp: (req, res) => {
-    if (req.body.name === undefined || req.body.email === undefined || req.body.password === undefined) {
-      return res.status(400).send({ message: 'Please crosscheck your information' });
+    if (!req.body.name || !req.body.email || !req.body.password) {
+      return res.status(400)
+        .send({ message: 'Please crosscheck your information' });
     }
     User.findAll({
       where: {
@@ -54,20 +56,22 @@ export default {
         });
       })
       .catch(error =>
-        res.status(400).send({
-          message: 'Your signup was not completed, please crosscheck your information',
-          error,
-        })
+        res.status(400)
+          .send({
+            message:
+            'Your signup was not completed, please crosscheck your information',
+            error,
+          })
       );
   },
 
   /**
- * login: Logs a user in
- * @function login
- * @param {object} req
- * @param {object} res
- * @return {object} Json data and a token
- */
+    * login: Logs a user in
+    * @function login
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data and a token
+    */
   login: (req, res) => {
     if (req.body.password === undefined) {
       return res.status(404).json({ message: 'Please input a password' });
@@ -87,27 +91,29 @@ export default {
         req.body.password, response[0].dataValues.password);
       if (isValidPassword) {
         const token = user.JWT(
-          response[0].dataValues.id, response[0].dataValues.email, response[0].dataValues.name,
+          response[0].dataValues.id,
+          response[0].dataValues.email, response[0].dataValues.name,
           response[0].dataValues.roleId
         );
         return res.status(200).json({ message: 'login successful', token });
       }
       return res.json({
-        message: 'email/password incorrect'
+        message: 'The email/password is incorrect'
       });
     })
       .catch(error => res.status(400).send(error));
   },
 
   /**
- * allUsers: return a paginated json object containing all users
- * @function allUsers
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
-  allUsers: (req, res) => {
+    * allUsers: return a paginated json object containing all users
+    * @function getAllUsers
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
+  getAllUsers: (req, res) => {
     const query = {
+      attributes: ['id', 'name', 'email']
     };
     query.limit = Math.abs(req.query.limit) || 10;
     query.offset = Math.abs(req.query.offset) || 0;
@@ -115,19 +121,23 @@ export default {
       .findAll(query)
       .then((users) => {
         const count = users.length;
-        paginate.information(count, query.limit, query.offset, users, res);
+        utitlities.paginate(count, query.limit, query.offset, users, res);
       })
       .catch(error => res.status(400).send(error));
   },
 
   /**
- * getUser: Get a user
- * @function getUser
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+    * getUser: Get a user
+    * @function getUser
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
   getUser: (req, res) => {
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
+    }
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id && !req.isAdmin) {
       return res.status(400).send({
@@ -136,12 +146,7 @@ export default {
     }
     User
       .findById(req.params.id, {
-        include: [{
-          model: Document,
-          as: 'Documents',
-          attributes: ['title', 'content', 'access']
-        }],
-        attributes: ['name', 'email']
+        attributes: ['name', 'email', 'id']
       })
       .then((user) => {
         res.status(200).send(user);
@@ -150,14 +155,25 @@ export default {
   },
 
   /**
- * updateUser: This updates a users information
- * @function updateUser
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+   * updateUser: This updates a users information
+   * @function updateUser
+   * @param {object} req
+   * @param {object} res
+   * @return {object} Json data
+   */
   updateUser: (req, res) => {
-    if (req.body.email !== undefined && !validator.isEmail(req.body.email)) {
+    let hashedPassword;
+    if (!req.body.name && !req.body.email && !req.body.password) {
+      return res.status(400).send({
+        message: 'Please cross check your request'
+      });
+    }
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
+    }
+
+    if (req.body.email && !validator.isEmail(req.body.email)) {
       return res.status(400).send({ message: 'Please use a valid email' });
     }
     const id = parseInt(req.params.id, 10);
@@ -166,6 +182,9 @@ export default {
         message: 'You cannot edit this users information'
       });
     }
+    if (req.body.password) {
+      hashedPassword = bcrypt.hash(req.body.password);
+    }
     User
       .findById(req.params.id)
       .then((user) => {
@@ -173,49 +192,63 @@ export default {
           .update({
             name: req.body.name || user.name,
             email: req.body.email || user.email,
+            password: hashedPassword || user.password
           })
           .then(() => {
             const updatedUser = {
               name: user.name,
               email: user.email
             };
-            res.status(200).send({ message: 'User updated succesfully', updatedUser });
+            res.status(200)
+              .send({ message: 'User updated succesfully', updatedUser });
           })
           .catch(error => res.status(400).send(error));
-      })
-      .catch(error => res.status(400).send(error));
+      });
   },
 
   /**
- * deleteUser: Delete a user
- * @function deleteUser
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+    * deleteUser: Delete a user
+    * @function deleteUser
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
   deleteUser: (req, res) => {
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
+    }
+
     const id = parseInt(req.params.id, 10);
     if (id === req.decoded.id) {
-      return res.status(400).send({ message: 'The admin cannot delete himself' });
+      return res.status(400)
+        .send({ message: 'The admin cannot delete himself' });
     }
     User
       .findById(id)
       .then((user) => {
         user
           .destroy()
-          .then(() => res.status(204).send());
+          .then(() => res
+            .json({ message: 'User has been deleted successfully' }))
+          .catch(error => res.status(400).send(error));
       })
       .catch(error => res.status(400).send(error));
   },
 
   /**
- * searchUserDocuments:Searches for all documents belonging to a user
- * @function searchUserDocuments
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+    * searchUserDocuments:Searches for all documents belonging to a user
+    * @function searchUserDocuments
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
   searchUserDocuments: (req, res) => {
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
+    }
+
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id && !req.isAdmin) {
       return res.send({
@@ -232,7 +265,8 @@ export default {
       })
       .then((user) => {
         if (user.Documents.length === 0) {
-          return res.status(200).send({ message: 'This user does not have any documents' });
+          return res.status(200)
+            .send({ message: 'You currently do not have any documents' });
         }
         res.status(200).send(user.Documents);
       })
@@ -240,15 +274,17 @@ export default {
   },
 
   /**
- * searchUsers: Search for a particular user
- * @function searchUsers
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+    * searchUsers: Search for a particular user
+    * @function searchUsers
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
   searchUsers: (req, res) => {
+    const searchString = req.query.q.trim();
     const query = {
-      where: { name: req.query.q },
+      where: { name: { $ilike: `%${searchString}%` } },
+      attributes: ['id', 'name', 'email']
     };
     User
       .findAll(query)
@@ -256,38 +292,50 @@ export default {
         if (user[0] === undefined) {
           return res.status(404).json({ message: 'This user doesn\'t exist' });
         }
-        const searchedUser = {
-          name: user[0].dataValues.name,
-          email: user[0].dataValues.email,
-        };
         const message = 'User found successfully';
-        return res.status(200).json({ message, searchedUser });
+        return res.status(200).json({ message, user });
       })
       .catch(error => res.status(400).send(error));
   },
 
   /**
- * changeRole: Changes a particular users role
- * @function changeRole
- * @param {object} req
- * @param {object} res
- * @return {object} Json data
- */
+    * changeRole: Changes a particular users role
+    * @function changeRole
+    * @param {object} req
+    * @param {object} res
+    * @return {object} Json data
+    */
   changeRole: (req, res) => {
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
+    }
+
     const id = parseInt(req.params.id, 10);
     if (id === 1) {
-      return res.status(400).send({ message: 'Admins cannot change their role' });
+      return res.status(400)
+        .send({ message: 'Admins cannot change their role' });
     }
     User
       .findById(id)
       .then((user) => {
+        if (!user) {
+          return res.status(400).send({ message: 'This user doesnt exist' });
+        }
         const role = parseInt(req.body.role, 10);
+        const updatedUser = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          roleId: req.body.role,
+        };
         if (role >= 1 && role <= 3) {
           user
             .update({
               roleId: req.body.role || user.roleId,
             })
-            .then(() => res.status(200).json({ message: 'Role changed', user }));
+            .then(() => res.status(200)
+              .json({ message: 'Role changed', updatedUser }));
         } else {
           return res.status(404).json({ message: 'invalid command' });
         }
