@@ -319,14 +319,23 @@ export default {
     User
       .findById(id)
       .then((user) => {
+        if (!user) {
+          return res.status(400).send({ message: 'This user doesnt exist' });
+        }
         const role = parseInt(req.body.role, 10);
+        const updatedUser = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          roleId: req.body.role,
+        };
         if (role >= 1 && role <= 3) {
           user
             .update({
               roleId: req.body.role || user.roleId,
             })
             .then(() => res.status(200)
-              .json({ message: 'Role changed', user }));
+              .json({ message: 'Role changed', updatedUser }));
         } else {
           return res.status(404).json({ message: 'invalid command' });
         }
