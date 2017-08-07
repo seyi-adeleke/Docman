@@ -72,6 +72,7 @@ describe('User Controller ', () => {
         })
         .expect(201)
         .end((err, res) => {
+          expect(res.body.message).to.equal('Registration Was Succesfull, You have been logged in');
           expect(res.status).to.equal(201);
           done();
         });
@@ -163,7 +164,7 @@ describe('User Controller ', () => {
             })
             .expect(400)
             .end((err, res) => {
-              expect(res.body.message).to.equal('email/password incorrect');
+              expect(res.body.message).to.equal('The email/password is incorrect');
               done();
             });
         });
@@ -289,6 +290,7 @@ describe('User Controller ', () => {
             .expect('Content-Type', /json/)
             .expect(400)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please use an integer value');
               expect(res.status).to.equal(400);
               done();
             });
@@ -372,6 +374,7 @@ describe('User Controller ', () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err, res) => {
+              expect(res.body.message).to.equal('You do not have access to this users information');
               expect(typeof (res.body)).to.equals('object');
               done();
             });
@@ -380,7 +383,7 @@ describe('User Controller ', () => {
   });
 
   describe('PUT /api/v1/users/:id', () => {
-    it('returns an error message is the user passes a string as the id', (done) => {
+    it('returns an error message if the user passes a string as the id', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -401,11 +404,42 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please use an integer value');
               expect(res.status).to.equal(400);
               done();
             });
         });
     });
+
+    it('returns an error message is the user tries to update their email to an invalid email', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .put('/api/v1/users/1')
+            .send({
+              email: 'adelekeadeleke.com',
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('Please use a valid email');
+              expect(res.status).to.equal(400);
+              done();
+            });
+            done();
+        });
+    });
+
     it('updates a user with the correct access information', (done) => {
       request(app)
         .post('/api/v1/users')
@@ -427,9 +461,11 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
+              expect(res.body.message).to.equal('User updated succesfully');
               expect(res.status).to.equal(200);
               done();
             });
+          done();
         });
     });
     it('returns an error message if the user tries to update another users details', (done) => {
@@ -482,6 +518,7 @@ describe('User Controller ', () => {
               expect((res.body.message)).to.equals('Please use a valid email');
               done();
             });
+          done();
         });
     });
   });
@@ -505,6 +542,7 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please use an integer value');
               expect(res.status).to.equals(400);
               done();
             });
@@ -529,6 +567,7 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
+              expect(res.body.message).to.equal('You currently do not have any documents');
               expect(res.status).to.equals(200);
               done();
             });
@@ -640,7 +679,8 @@ describe('User Controller ', () => {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
-              expect(res.body.searchedUser.name).to.equals('femi');
+
+              expect(res.status).to.equals(200);
               done();
             });
         });
@@ -671,6 +711,8 @@ describe('User Controller ', () => {
               .expect('Content-Type', /json/)
               .expect(200)
               .end((err, res) => {
+                console.log(res.body.message)
+
                 expect(res.status).to.equal(200);
                 done();
               });
@@ -747,6 +789,7 @@ describe('User Controller ', () => {
                   .expect('Content-Type', /json/)
                   .expect(200)
                   .end((err, res) => {
+
                     expect(res.status).to.equal(200);
                     done();
                   });
@@ -792,6 +835,7 @@ describe('User Controller ', () => {
                   .expect('Content-Type', /json/)
                   .expect(400)
                   .end((err, res) => {
+
                     expect(res.status).to.equal(400);
                     done();
                   });
@@ -916,6 +960,7 @@ describe('User Controller ', () => {
                   .expect('Content-Type', /json/)
                   .expect(200)
                   .end((err, res) => {
+
                     expect(res.status).to.equal(200);
                     done();
                   });

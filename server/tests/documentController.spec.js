@@ -1,5 +1,4 @@
-import chai, { expect } from 'chai';
-import jwt from 'jsonwebtoken';
+import { expect } from 'chai';
 
 import bcrypt from '../../build/utilities/bcrypt';
 
@@ -7,7 +6,6 @@ const User = require('../../build/models').User;
 const Document = require('../../build/models').Document;
 const Role = require('../../build/models').Role;
 const request = require('supertest');
-const assert = require('chai').assert;
 require('babel-register');
 const app = require('../../build/app').default;
 
@@ -98,7 +96,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
-              expect(typeof res.body).to.equal('object');
+              expect(res.body.message).to.equal('Document created succesfully');
               done();
             });
         });
@@ -123,6 +121,7 @@ describe('Document Controller ', () => {
             .expect('Content-Type', /json/)
             .expect(400)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please input a title or some content');
               expect(res.status).to.equal(400);
             });
           done();
@@ -158,6 +157,36 @@ describe('Document Controller ', () => {
             });
         });
     });
+    it('throws a 400 if a user tries to create a document with the wrong access levele', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(201)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents')
+            .send({
+              title: 'title',
+              content: 'content',
+              access: 'wrong'
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(404)
+            .end((err, res) => {
+              expect(res.body.message).to.equal('You cannot create a document with this access level');
+              expect(res.status).to.equal(400);
+              done();
+            });
+        });
+    });
   });
 
   describe('GET /api/v1/documents', () => {
@@ -184,6 +213,7 @@ describe('Document Controller ', () => {
               .expect('Content-Type', /json/)
               .expect(200)
               .end((err, res) => {
+                expect(res.body.message).to.equal('Data found');
                 expect(res.status).to.equal(200);
                 done();
               });
@@ -213,6 +243,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Data found');
               expect(res.status).to.equal(200);
               done();
             });
@@ -239,6 +270,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              expect(res.body.message).to.equals('This document doesn\'t exist');
               expect((res.status)).to.equals(404);
               done();
             });
@@ -262,6 +294,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please use an integer value');
               expect((res.status)).to.equals(400);
               done();
             });
@@ -297,6 +330,7 @@ describe('Document Controller ', () => {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
+                  expect(res.body.message).to.equal('Document Found succesfully');
                   expect(res.status).to.equal(200);
                   done();
                 });
@@ -344,6 +378,7 @@ describe('Document Controller ', () => {
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
                     .end((err, res) => {
+                      expect(res.body.message).to.equal('You do not have access to this document');
                       expect(res.status).to.equal(400);
                       done();
                     });
@@ -385,99 +420,13 @@ describe('Document Controller ', () => {
                   .set('Accept', 'application/json')
                   .expect('Content-Type', /json/)
                   .end((err, res) => {
+                    expect(res.body.message).to.equal('Document Found succesfully');
                     expect(res.status).to.equal(200);
                     done();
-                  })
+                  });
               });
           });
       });
-    });
-
-    xit('returns a 200 if users try to find documents that belong to them and exist', (done) => {
-      request(app)
-        .post('/api/v1/users')
-        .send({
-          name: 'seyi',
-          password: 'seyi',
-          email: 'seyi@seyi.com',
-          roleId: 2
-        })
-        .expect(200)
-        .end((err, res) => {
-          token = res.body.token;
-          request(app)
-            .post('/api/v1/documents')
-            .send({
-              title: 'title',
-              content: 'content'
-            })
-            .set('Authorization', `${token}`)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end((err, res) => {
-              request(app)
-                .get('/api/v1/documents/1')
-                .set('Authorization', `${token}`)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .end((err, res) => {
-                  expect(res.status).to.equal(200);
-                  done();
-                });
-              done();
-            });
-        });
-    });
-
-    xit('returns a 404 if you try to access anothers user\'s private document', (done) => {
-      request(app)
-        .post('/api/v1/users')
-        .send({
-          name: 'seyi',
-          password: 'seyi',
-          email: 'seyi@seyi.com',
-          roleId: 2
-        })
-        .expect(200)
-        .end((err, res) => {
-          token = res.body.token;
-          request(app)
-            .post('/api/v1/documents')
-            .send({
-              title: 'title',
-              content: 'content',
-              access: 'private'
-            })
-            .set('Authorization', `${token}`)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end((err, res) => {
-              request(app)
-                .post('/api/v1/users/')
-                .send({
-                  name: 'femi',
-                  password: 'femi',
-                  email: 'femi@femi.com',
-                  roleId: 2
-                })
-                .expect(200)
-                .end((err, res) => {
-                  token = res.body.token;
-                  request(app)
-                    .get('/api/v1/documents/1')
-                    .set('Authorization', `${token}`)
-                    .set('Accept', 'application/json')
-                    .expect('Content-Type', /json/)
-                    .expect(200)
-                    .end((err, res) => {
-                      expect(res.body.message).to.equal('You do not have access to this document');
-                      done();
-                    });
-                });
-            });
-        });
     });
   });
 
@@ -501,6 +450,7 @@ describe('Document Controller ', () => {
             .expect('Content-Type', /json/)
             .expect(400)
             .end((err, res) => {
+              expect(res.body.message).to.equals('Please use an integer value');
               expect(res.status).to.equal(400);
               done();
             });
@@ -646,6 +596,7 @@ describe('Document Controller ', () => {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
+                  expect(res.body.message).to.equal('Document updated');
                   expect((res.status)).to.equals(200);
                   done();
                 });
@@ -689,7 +640,6 @@ describe('Document Controller ', () => {
                   expect((res.status)).to.equals(400);
                   done();
                 });
-              done();
             });
         });
     });
@@ -735,7 +685,7 @@ describe('Document Controller ', () => {
   });
 
   describe('DELETE /api/v1/documents/:id', () => {
-    it('returns a 400 if a user passes a strin as the id', (done) => {
+    it('returns a 400 if a user passes a string as the id', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -753,6 +703,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              expect(res.body.message).to.equal('Please use an integer value')
               expect(res.status).to.equals(400);
               done();
             });
@@ -777,6 +728,7 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              expect(res.body.message).to.equal('this document doesnt exist');
               expect(res.status).to.equals(404);
               done();
             });
@@ -811,6 +763,7 @@ describe('Document Controller ', () => {
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .end((err, res) => {
+                  expect(res.body.message).to.equal('Document has been deleted successfully');
                   expect(res.status).to.equal(200);
                   done();
                 });
@@ -887,7 +840,35 @@ describe('Document Controller ', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .end((err, res) => {
+              console.log(res.body);
+              expect(res.body.message).to.equal('This document doesnt exist');
               expect(res.status).to.equals(404);
+              done();
+            });
+        });
+    });
+
+    it('returns a 400 if a user doesnt input a search query', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(400)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .get('/api/v1/search/documents/')
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .end((err, res) => {
+              console.log(res.body);
+              expect(res.body.message).to.equal('Please input a search query');
+              expect(res.status).to.equals(400);
               done();
             });
         });
