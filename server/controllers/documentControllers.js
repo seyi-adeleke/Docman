@@ -1,10 +1,9 @@
-import validator from 'validator';
-
 import db from '../models/index';
 
 
 import utilities from '../utilities/paginate';
 import date from '../utilities/formatDate';
+import validate from '../utilities/validateId';
 
 const Document = require('../models').Document;
 const User = require('../models').User;
@@ -18,7 +17,7 @@ export default {
    * @return {object} Json data
    */
   create: (req, res) => {
-    if (req.body.title === undefined || req.body.content === undefined) {
+    if (!req.body.title || !req.body.content) {
       return res.status(400)
         .send({ message: 'Please input a title or some content' });
     }
@@ -27,6 +26,13 @@ export default {
       body.access = 'public';
     }
     body.access = req.body.access.toLowerCase();
+    if (body.access !== 'public' &&
+      body.access !== 'private' && body.access !== 'role') {
+      return res.status(400)
+        .send({
+          message: 'You cannot create a document with this access level'
+        });
+    }
     body.userId = req.decoded.id;
     body.roleId = req.decoded.roleId;
     if (body.roleId === 2) {
@@ -35,18 +41,34 @@ export default {
           .json({ message: 'You cannot create Role based documents' });
       }
     }
-    Document
-      .create(body)
-      .then(response => res.status(201).send({
-        message: 'Document created succesfully',
-        document: {
-          title: response.title,
-          content: response.content,
-          access: response.access,
-          createdOn: response.createdAt,
-          id: response.id,
-        }
-      }))
+    Document.findAll({
+      where: {
+        title: req.body.title,
+      }
+    })
+      .then((response) => {
+        if (response.length === 0) {
+          return Document
+            .create(body)
+            .then((document) => {
+              res.status(201).send({
+                message: 'Document created succesfully',
+                document: {
+                  title: document.title,
+                  content: document.content,
+                  access: document.access,
+                  createdOn: document.createdAt,
+                  id: document.id,
+                }
+              });
+            })
+            .catch((error) => {
+              res.status(400).send(error);
+            });
+        } return res.json({
+          message: 'This document exists'
+        });
+      })
       .catch(error => res.status(400).send(error));
   },
 
@@ -85,7 +107,6 @@ export default {
           attributes: ['name', 'email', 'id']
         }],
         attributes: ['title', 'content', 'access', 'createdAt', 'id']
-
       };
     }
     query.limit = Math.abs(req.query.limit) || 10;
@@ -107,7 +128,7 @@ export default {
    * @return {object} Json data
    */
   findDocument: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
+    if (validate.id(req.params.id)) {
       return res.status(400)
         .send({ message: 'Please use an integer value' });
     }
@@ -163,11 +184,11 @@ export default {
     * @return {object} Json data
    */
   updateDocument: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
-    if (req.body.title === undefined &&
-      req.body.content === undefined && req.body.access === undefined) {
+    if (!req.body.title && !req.body.content && !req.body.access) {
       return res.status(400).send({
         message: 'Please cross check your request'
       });
@@ -225,8 +246,9 @@ export default {
      * @return {null} void
     */
   deleteDocument: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
     Document
       .findById(req.params.id)
@@ -258,21 +280,29 @@ export default {
    * @return {object} Json data
    */
   searchDocuments: (req, res) => {
+    if (req.query.q === undefined) {
+      return res.status(400).send({ message: 'Please input a search query' });
+    }
+    const searchString = req.query.q.trim();
     let query;
     if (req.isAdmin) {
       query = {
-        where: { title: req.query.q }
+        where: { title: { $ilike: `%${searchString}%` } },
+        attributes: ['title', 'content', 'id', 'createdAt']
       };
     } else if (req.decoded.roleId === 2) {
       query = {
-        where: { title: req.query.q, access: 'public' }
+        where: { title: { $ilike: `%${searchString}%` }, access: 'public' },
+        attributes: ['title', 'content', 'id', 'createdAt']
+
       };
     } else if (req.decoded.roleId === 3) {
       query = {
         where: {
-          title: req.query.q,
+          title: { $ilike: `%${searchString}%` },
           $or: [{ access: 'public' }, { access: 'role' }]
-        }
+        },
+        attributes: ['title', 'content', 'id', 'createdAt']
       };
     }
     Document
@@ -283,11 +313,7 @@ export default {
           return res.status(404)
             .json({ message: 'This document doesnt exist' });
         }
-        const searchedDocument = {
-          title: document[0].dataValues.title,
-          content: document[0].dataValues.content
-        };
-        return res.status(200).json({ message, searchedDocument });
+        return res.status(200).json({ message, document });
       })
       .catch(error => res.status(400).send(error));
   }

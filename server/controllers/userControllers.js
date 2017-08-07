@@ -2,6 +2,7 @@ import validator from 'validator';
 
 import bcrypt from '../utilities/bcrypt';
 import utitlities from '../utilities/paginate';
+import validate from '../utilities/validateId';
 
 const User = require('../models').User;
 const Document = require('../models').Document;
@@ -97,7 +98,7 @@ export default {
         return res.status(200).json({ message: 'login successful', token });
       }
       return res.json({
-        message: 'email/password incorrect'
+        message: 'The email/password is incorrect'
       });
     })
       .catch(error => res.status(400).send(error));
@@ -133,8 +134,9 @@ export default {
     * @return {object} Json data
     */
   getUser: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id && !req.isAdmin) {
@@ -160,11 +162,18 @@ export default {
    * @return {object} Json data
    */
   updateUser: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    let hashedPassword;
+    if (!req.body.name && !req.body.email && !req.body.password) {
+      return res.status(400).send({
+        message: 'Please cross check your request'
+      });
+    }
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
 
-    if (req.body.email !== undefined && !validator.isEmail(req.body.email)) {
+    if (req.body.email && !validator.isEmail(req.body.email)) {
       return res.status(400).send({ message: 'Please use a valid email' });
     }
     const id = parseInt(req.params.id, 10);
@@ -173,6 +182,9 @@ export default {
         message: 'You cannot edit this users information'
       });
     }
+    if (req.body.password) {
+      hashedPassword = bcrypt.hash(req.body.password);
+    }
     User
       .findById(req.params.id)
       .then((user) => {
@@ -180,6 +192,7 @@ export default {
           .update({
             name: req.body.name || user.name,
             email: req.body.email || user.email,
+            password: hashedPassword || user.password
           })
           .then(() => {
             const updatedUser = {
@@ -190,8 +203,7 @@ export default {
               .send({ message: 'User updated succesfully', updatedUser });
           })
           .catch(error => res.status(400).send(error));
-      })
-      .catch(error => res.status(400).send(error));
+      });
   },
 
   /**
@@ -202,8 +214,9 @@ export default {
     * @return {object} Json data
     */
   deleteUser: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
@@ -231,8 +244,9 @@ export default {
     * @return {object} Json data
     */
   searchUserDocuments: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
@@ -252,7 +266,7 @@ export default {
       .then((user) => {
         if (user.Documents.length === 0) {
           return res.status(200)
-            .send({ message: 'This user does not have any documents' });
+            .send({ message: 'You currently do not have any documents' });
         }
         res.status(200).send(user.Documents);
       })
@@ -267,8 +281,10 @@ export default {
     * @return {object} Json data
     */
   searchUsers: (req, res) => {
+    const searchString = req.query.q.trim();
     const query = {
-      where: { name: req.query.q },
+      where: { name: { $ilike: `%${searchString}%` } },
+      attributes: ['id', 'name', 'email']
     };
     User
       .findAll(query)
@@ -276,12 +292,8 @@ export default {
         if (user[0] === undefined) {
           return res.status(404).json({ message: 'This user doesn\'t exist' });
         }
-        const searchedUser = {
-          name: user[0].dataValues.name,
-          email: user[0].dataValues.email,
-        };
         const message = 'User found successfully';
-        return res.status(200).json({ message, searchedUser });
+        return res.status(200).json({ message, user });
       })
       .catch(error => res.status(400).send(error));
   },
@@ -294,8 +306,9 @@ export default {
     * @return {object} Json data
     */
   changeRole: (req, res) => {
-    if (validator.isAlpha(req.params.id)) {
-      return res.status(400).send({ message: 'Please use an integer value' });
+    if (validate.id(req.params.id)) {
+      return res.status(400)
+        .send({ message: 'Please use an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
