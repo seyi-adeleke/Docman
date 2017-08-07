@@ -8,33 +8,31 @@ It Features an Administator that has access to all documents and users.
 
 # Basic Features
 <ul>
-<li>Users can view documents </li>
+<li>Users can view documents based on priviledges</li>
 <li>Users can search for documents </li>
-<li>Users can create document and specify the access leve;</li>
+<li>Users can create document and specify the access level</li>
 <li>Users can edit documents</li>
+<li>Users can edit documents </li>
+<li>Admins can get a list of all users and all documents </li>
 </ul>
 
 # Endpoints
-
 Please click **[here](https://docman-cp2-staging.herokuapp.com)** to view the api's documentation
 
 # Dependencies
 *  **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - For authorization and authentication
-*  **[Gulp](https://www.npmjs.com/package/gulp)** - As a task runner
-*  **[Gulp-babel](https://www.npmjs.com/package/gulp-babel)** - For transpiling ES6
-*  **[gulp-istanbul](https://www.npmjs.com/package/gulp-istanbul)** - For generating test
-*  **[Chai](https://www.npmjs.com/package/chai)** - As an assertion Library
-*  **[Gulp-Jasmine](https://www.npmjs.com/package/gulp-jasmine)** - A BDD style Test framework
+*  **[bcrypt](https://www.npmjs.com/package/bcrypt)** - For hashing passwords
+*  **[Express](https://expressjs.com/)** - A web application framework
 *  **[sequelize](https://www.npmjs.com/package/sequelize)** - As on `ORM`
 
-*  The following depencies are required by the app during developmment
-  *  **[eslint](https://www.npmjs.com/package/eslint)** - A javascript Linter
-  * **[gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon)** - To watch the files in the directory for any files change
-  * **[supertest](https://www.npmjs.com/package/supertest)** - To make Api calls
-
-*  **[bcrypt](https://www.npmjs.com/package/bcrypt)** - For hashing passwords
-*  **[dotenv](https://www.npmjs.com/package/dotenv)** - For protecting Tokens
-*  **[Express](https://expressjs.com/)** - A web application framework
+# Dev Dependencies
+*  **[Chai](https://www.npmjs.com/package/chai)** - As an assertion Library
+*  **[Gulp-Jasmine](https://www.npmjs.com/package/gulp-jasmine)** - A BDD style Test framework
+*  **[Gulp](https://www.npmjs.com/package/gulp)** - As a task runner
+*  **[Gulp-babel](https://www.npmjs.com/package/gulp-babel)** - For transpiling ES6
+*  **[gulp-istanbul](https://www.npmjs.com/package/gulp-istanbul)** - For generating test coverage
+* **[gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon)** - To watch the files in the directory for any files change
+* **[supertest](https://www.npmjs.com/package/supertest)** - To make Api calls
 
 
 # Installation
@@ -58,6 +56,23 @@ Please click **[here](https://docman-cp2-staging.herokuapp.com)** to view the ap
 
 # Contributing
 Contibutions to Docman are welcome. Fork this Repo and submit a pull request with the pr message explaining your changes.Ensure it is fully tested and you extend the `airbnb` style guide
+
+# FAQ
+
+
+## How do I access the API?
+A link to the `api` is provided **[here](https://docman-cp2-staging.herokuapp.com/api/v1)** 
+All Api endpoints are restful
+
+## What format is the reponse?
+
+The API currently returns data in `JSON` format.
+
+## Authentication?
+All api endpoints require authentication and authorization. On succesfull login or signup a token is returned. Set the token as the value to the `Authorization` key in your `headers`.
+
+# Limitations
+The api uses a shared database connection thereby leading to occasionally slow response times
 
 # License
 
