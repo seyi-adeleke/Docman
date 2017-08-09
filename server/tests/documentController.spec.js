@@ -483,7 +483,7 @@ describe('Document Controller ', () => {
         });
     });
 
-    it('returns a 400 if a user tries to update a document that doesnt exist', (done) => {
+    it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -505,7 +505,8 @@ describe('Document Controller ', () => {
             .expect('Content-Type', /json/)
             .expect(404)
             .end((err, res) => {
-              expect(res.status).to.equal(400);
+              expect(res.body.message).to.equal('This document doesn\'t exist');
+              expect(res.status).to.equal(404);
               done();
             });
         });
@@ -639,6 +640,57 @@ describe('Document Controller ', () => {
                 .end((err, res) => {
                   expect((res.status)).to.equals(400);
                   done();
+                });
+            });
+        });
+    });
+
+    it('returns a 400 if a user updates a document to a document that already exists', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'seyi',
+          password: 'seyi',
+          email: 'seyi@seyi.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          token = res.body.token;
+          request(app)
+            .post('/api/v1/documents')
+            .send({
+              title: 'title',
+              content: 'content'
+            })
+            .set('Authorization', `${token}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              request(app)
+                .post('/api/v1/documents')
+                .send({
+                  title: 'document',
+                  content: 'content'
+                })
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                  request(app)
+                    .put('/api/v1/documents/1')
+                    .send({
+                      title: 'document'
+                    })
+                    .set('Authorization', `${token}`)
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', /json/)
+                    .end((err, res) => {
+                      expect((res.body.message)).to.equals('This document exists already');
+                      done();
+                    });
                 });
             });
         });

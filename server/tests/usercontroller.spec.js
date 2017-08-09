@@ -493,7 +493,45 @@ describe('User Controller ', () => {
             });
         });
     });
-    it('returns an error message if the user tries to update their email with an invalid value', (done) => {
+    it('returns an error message if the user tries to update their email to an email that already exists', (done) => {
+      request(app)
+        .post('/api/v1/users')
+        .send({
+          name: 'test',
+          password: 'test',
+          email: 'test@test.com',
+          roleId: 2
+        })
+        .expect(200)
+        .end((err, res) => {
+          request(app)
+            .post('/api/v1/users')
+            .send({
+              name: 'seyi',
+              password: 'seyi',
+              email: 'seyi@seyi.com',
+              roleId: 2
+            })
+            .expect(200)
+            .end((err, res) => {
+              token = res.body.token;
+              request(app)
+                .put('/api/v1/users/2')
+                .send({
+                  email: 'test@test.com',
+                })
+                .set('Authorization', `${token}`)
+                .set('Accept', 'application/json')
+                .expect(400)
+                .end((err, res) => {
+                  expect((res.body.message)).to.equals('This email already exists');
+                  done();
+                });
+            });
+        });
+    });
+
+    it('encrypts a password when a user tries to update it', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
@@ -508,16 +546,15 @@ describe('User Controller ', () => {
           request(app)
             .put('/api/v1/users/1')
             .send({
-              email: 'adeleke.com',
+              password: 'new password',
             })
             .set('Authorization', `${token}`)
             .set('Accept', 'application/json')
             .expect(400)
             .end((err, res) => {
-              expect((res.body.message)).to.equals('Please use a valid email');
+              expect((res.body.message)).to.equals('User updated succesfully');
               done();
             });
-          done();
         });
     });
   });
