@@ -531,7 +531,7 @@ describe('User Controller ', () => {
         });
     });
 
-    it('encrypts a password when a user tries to update it', (done) => {
+   it('encrypts a password when a user tries to update it', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({

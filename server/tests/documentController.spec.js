@@ -483,7 +483,7 @@ describe('Document Controller ', () => {
         });
     });
 
-    it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
+it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
       request(app)
         .post('/api/v1/users')
         .send({
