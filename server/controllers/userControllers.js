@@ -202,7 +202,13 @@ export default {
             res.status(200)
               .send({ message: 'User updated succesfully', updatedUser });
           })
-          .catch(error => res.status(400).send(error));
+          .catch((error) => {
+            if (error.parent.code === '23505') {
+              return res.status(400)
+                .send({ message: 'This email already exists' });
+            }
+            return error;
+          });
       });
   },
 
