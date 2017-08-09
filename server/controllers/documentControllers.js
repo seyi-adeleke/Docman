@@ -196,6 +196,11 @@ export default {
     Document
       .findById(req.params.id)
       .then((document) => {
+        if (document === null) {
+          return res.status(404).json({
+            message: 'This document doesn\'t exist'
+          });
+        }
         const updatedDocument = {
           title: req.body.title,
           content: req.body.content,
@@ -216,11 +221,7 @@ export default {
             message: 'You cannot create role based documents'
           });
         }
-        if (!document) {
-          return res.status(404).json({
-            message: 'this document doesnt exist'
-          });
-        } else if (document.userId !== req.decoded.id) {
+        if (document.userId !== req.decoded.id) {
           return res.status(404).json({
             message: 'you cannot edit this document'
           });
@@ -235,7 +236,13 @@ export default {
             message: 'Document updated', updatedDocument
           }));
       })
-      .catch(error => res.status(400).send(error));
+      .catch((error) => {
+        if (error.parent.code === '23505') {
+          return res.status(400)
+            .send({ message: 'This document exists already' });
+        }
+        return error;
+      });
   },
 
   /**
