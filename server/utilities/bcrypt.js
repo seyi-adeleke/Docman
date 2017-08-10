@@ -16,7 +16,8 @@ export default {
    * @param {string} hashPassword
    * @return {boolean} True/False
    */
-  comparePassword: (password, hashPassword) => bcrypt.compareSync(password, hashPassword),
+  comparePassword: (password, hashPassword) =>
+    bcrypt.compareSync(password, hashPassword),
 
 };
 
