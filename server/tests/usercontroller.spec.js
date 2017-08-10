@@ -538,9 +538,13 @@ describe('User Controller ', () => {
     });
 <<<<<<< Updated upstream
 
+<<<<<<< HEAD
 =======
 >>>>>>> Stashed changes
     it('encrypts a password when a user tries to update it', (done) => {
+=======
+   it('encrypts a password when a user tries to update it', (done) => {
+>>>>>>> 293dcebfe09870a648ba7bb859ce3154e695f489
       request(app)
         .post('/api/v1/users')
         .send({
