@@ -23,13 +23,13 @@ module.exports = (app) => {
     verify.isAdmin, usersController.deleteUser);
 
   app.get('/api/v1/users/:id/documents',
-    verify.isLoggedIn, usersController.searchUserDocuments);
+    verify.isLoggedIn, usersController.getUserDocuments);
 
   app.post('/api/v1/documents',
     verify.isLoggedIn, documentsController.create);
 
   app.get('/api/v1/documents',
-    verify.isLoggedIn, documentsController.list);
+    verify.isLoggedIn, documentsController.getAllDocuments);
 
   app.get('/api/v1/documents/:id',
     verify.isLoggedIn, documentsController.findDocument);

@@ -5,24 +5,20 @@ export default {
     * @param  {integer} limit - The specified limit
     * @param {integer} offset - The specified offset
     * @param  {object} content - response from the database
-    * @return {object}
+    * @return {object} object
    */
-  paginate: (totalCount, limit, offset, content, response) => {
+  paginate: (totalCount, limit, offset, content) => {
     let pageCount = Math.round(totalCount / limit);
     if (pageCount < 1 && totalCount > 0) {
       pageCount = 1;
     }
-
     const page = Math.round(offset / limit) + 1;
-    return response.status(200).send({
-      message: 'Data found',
-      content,
-      metaData: {
-        page,
-        pageCount,
-        pageSize: content.length,
-        totalCount,
-      }
-    });
-  }
+    const metaData = {
+      page,
+      pageCount,
+      pageSize: content.length,
+      totalCount,
+    };
+    return metaData;
+  },
 };

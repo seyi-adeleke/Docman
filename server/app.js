@@ -23,7 +23,8 @@ require('./routes')(app);
 app.use(express.static(path.resolve(__dirname, './../documentation')));
 
 app.get('/', (request, response) => {
-  response.sendFile(path.resolve(__dirname, './../documentation', 'index.html'));
+  response.sendFile(
+    path.resolve(__dirname, './../documentation', 'index.html'));
 });
 
 app.get('*', (req, res) => res.status(200).send({

@@ -22,7 +22,7 @@ export default {
         .send({ message: 'Please input a title or some content' });
     }
     const body = req.body;
-    if (body.access === undefined) {
+    if (!body.access) {
       body.access = 'public';
     }
     body.access = req.body.access.toLowerCase();
@@ -79,43 +79,38 @@ export default {
     * @param {object} res response
     * @return {object} Json data 
     */
-  list: (req, res) => {
-    let query;
-    if (req.decoded.roleId === 2) {
-      query = {
-        where: { access: 'public' },
+  getAllDocuments: (req, res) => {
+    const defineAccess = () => {
+      const query = {
         include: [{
           model: db.User,
           attributes: ['name', 'email', 'id']
         }],
         attributes: ['title', 'content', 'access', 'createdAt', 'id']
       };
-    } else if (req.decoded.roleId === 3) {
-      query = {
-        include: [{
-          model: db.User,
-          attributes: ['name', 'email', 'id']
-        }],
-        where: { $or: [{ access: 'public' }, { access: 'role' }] },
-        attributes: ['title', 'content', 'access', 'createdAt', 'id']
-      };
-    } else {
-      query = {
-        where: {},
-        include: [{
-          model: db.User,
-          attributes: ['name', 'email', 'id']
-        }],
-        attributes: ['title', 'content', 'access', 'createdAt', 'id']
-      };
-    }
-    query.limit = Math.abs(req.query.limit) || 10;
-    query.offset = Math.abs(req.query.offset) || 0;
+      query.limit = Math.abs(req.query.limit) || 10;
+      query.offset = Math.abs(req.query.offset) || 0;
+      if (req.decoded.roleId === 2) {
+        query.where = { access: 'public' };
+        return query;
+      } else if (req.decoded.roleId === 3) {
+        query.where = { $or: [{ access: 'public' }, { access: 'role' }] };
+        return query;
+      }
+      return query;
+    };
     Document
-      .findAll(query)
+      .findAll(defineAccess())
       .then((documents) => {
         const count = documents.length;
-        utilities.paginate(count, query.limit, query.offset, documents, res);
+        const metaData = utilities
+          .paginate(count,
+            defineAccess().limit, defineAccess().offset, documents);
+        return res.status(200).send({
+          message: 'Documents found',
+          Documents: documents,
+          metaData,
+        });
       })
       .catch(error => res.status(400).send(error));
   },
@@ -130,7 +125,8 @@ export default {
   findDocument: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({ message:
+          'The Identifier in the parameter should be an integer value' });
     }
     Document
       .findById(req.params.id, {
@@ -186,7 +182,9 @@ export default {
   updateDocument: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message: 'The Identifier in the parameter should be an integer value'
+        });
     }
     if (!req.body.title && !req.body.content && !req.body.access) {
       return res.status(400).send({
@@ -209,10 +207,21 @@ export default {
         };
         if (req.body.access) {
           if (req.body.access !== 'private' &&
-            req.body.access !== 'public' && req.body.access !== 'role') {
-            return res.status(400).send({
-              document: 'You cannot change a document to this access level'
-            });
+            req.body.access !== 'public'
+            && req.body.access !== 'role' && req.decoded.roleId === 2) {
+            return res.status(400)
+              .send({
+                document:
+                'You can only create \'public\' or \'private\' documents'
+              });
+          } else if (req.body.access !== 'private' &&
+            req.body.access !== 'public'
+            && req.body.access !== 'role' && req.decoded.roleId === 3) {
+            return res.status(400)
+              .send({
+                document:
+          'You can only create \'public\', \'private\' or \'role\' documents'
+              });
           }
         }
         if (req.body.access === 'role'
@@ -255,7 +264,9 @@ export default {
   deleteDocument: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message:
+          'The Identifier in the parameter should be an integer value' });
     }
     Document
       .findById(req.params.id)

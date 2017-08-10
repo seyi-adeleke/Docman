@@ -1,3 +1,3 @@
 eslint:
-  enabled: false
-  config_file: .eslintrc
+  enabled: true
+  config_file: .eslintrc.json
