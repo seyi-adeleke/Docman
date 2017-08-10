@@ -19,7 +19,7 @@ export default {
   signUp: (req, res) => {
     if (!req.body.name || !req.body.email || !req.body.password) {
       return res.status(400)
-        .send({ message: 'Please crosscheck your information' });
+        .send({ message: 'Please add a name, email and password' });
     }
     User.findAll({
       where: {
@@ -52,7 +52,7 @@ export default {
               res.status(400).send(error);
             });
         } return res.json({
-          message: 'This user exists'
+          message: 'This Email already exists'
         });
       })
       .catch(error =>
@@ -73,7 +73,7 @@ export default {
     * @return {object} Json data and a token
     */
   login: (req, res) => {
-    if (req.body.password === undefined) {
+    if (!req.body.password) {
       return res.status(404).json({ message: 'Please input a password' });
     }
     User.findAll({
@@ -121,7 +121,13 @@ export default {
       .findAll(query)
       .then((users) => {
         const count = users.length;
-        utitlities.paginate(count, query.limit, query.offset, users, res);
+        const metaData = utitlities
+          .paginate(count, query.limit, query.offset, users);
+        return res.status(200).send({
+          message: 'Users found',
+          Users: users,
+          metaData,
+        });
       })
       .catch(error => res.status(400).send(error));
   },
@@ -136,7 +142,8 @@ export default {
   getUser: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({ message:
+          'The Identifier in the parameter should be an integer value' });
     }
     const id = parseInt(req.params.id, 10);
     if (id !== req.decoded.id && !req.isAdmin) {
@@ -165,12 +172,14 @@ export default {
     let hashedPassword;
     if (!req.body.name && !req.body.email && !req.body.password) {
       return res.status(400).send({
-        message: 'Please cross check your request'
+        message: 'Please pass add a name, email or password to your request'
       });
     }
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message:
+          'The Identifier in the parameter should be an integer value' });
     }
 
     if (req.body.email && !validator.isEmail(req.body.email)) {
@@ -222,7 +231,9 @@ export default {
   deleteUser: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message:
+          'The Identifier in the parameter should be an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
@@ -249,10 +260,12 @@ export default {
     * @param {object} res
     * @return {object} Json data
     */
-  searchUserDocuments: (req, res) => {
+  getUserDocuments: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message:
+          'The Identifier in the parameter should be an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
@@ -314,7 +327,9 @@ export default {
   changeRole: (req, res) => {
     if (validate.id(req.params.id)) {
       return res.status(400)
-        .send({ message: 'Please use an integer value' });
+        .send({
+          message:
+          'The Identifier in the parameter should be an integer value' });
     }
 
     const id = parseInt(req.params.id, 10);
