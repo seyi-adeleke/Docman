@@ -585,15 +585,7 @@ describe('Document Controller ', () => {
           });
       });
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-    it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
-=======
     it('lets users update their documents', (done) => {
->>>>>>> Stashed changes
-=======
-it('returns a 404 if a user tries to update a document that doesnt exist', (done) => {
->>>>>>> 293dcebfe09870a648ba7bb859ce3154e695f489
       request(app)
         .post('/api/v1/users')
         .send({
