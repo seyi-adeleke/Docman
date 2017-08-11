@@ -16,23 +16,17 @@ It Features an Administator that has access to all documents and users.
 <li>Admins can get a list of all users and all documents </li>
 </ul>
 
-# Endpoints
+# Api Documentation
 Please click **[here](https://docman-cp2-staging.herokuapp.com)** to view the api's documentation
 
-# Dependencies
-*  **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - For authorization and authentication
-*  **[bcrypt](https://www.npmjs.com/package/bcrypt)** - For hashing passwords
-*  **[Express](https://expressjs.com/)** - A web application framework
-*  **[sequelize](https://www.npmjs.com/package/sequelize)** - As on `ORM`
+#  System Dependencies
+To run this Api locally ensure you have the following dependcies on your computer
+*  **[Node](https://nodejs.org/en/)** - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+*  **[Npm](https://www.npmjs.com/)** - Node package Manager
+*  **[postgres](http://postgres.com/)** - PostgreSQL is a powerful, open source object-relational database system
+*  Any `REST` Api client
 
-# Dev Dependencies
-*  **[Chai](https://www.npmjs.com/package/chai)** - As an assertion Library
-*  **[Gulp-Jasmine](https://www.npmjs.com/package/gulp-jasmine)** - A BDD style Test framework
-*  **[Gulp](https://www.npmjs.com/package/gulp)** - As a task runner
-*  **[Gulp-babel](https://www.npmjs.com/package/gulp-babel)** - For transpiling ES6
-*  **[gulp-istanbul](https://www.npmjs.com/package/gulp-istanbul)** - For generating test coverage
-* **[gulp-nodemon](https://www.npmjs.com/package/gulp-nodemon)** - To watch the files in the directory for any files change
-* **[supertest](https://www.npmjs.com/package/supertest)** - To make Api calls
+Production and development dependencies are listed in the package.json file
 
 
 # Installation
