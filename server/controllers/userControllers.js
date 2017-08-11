@@ -172,7 +172,7 @@ export default {
     let hashedPassword;
     if (!req.body.name && !req.body.email && !req.body.password) {
       return res.status(400).send({
-        message: 'Please pass add a name, email or password to your request'
+        message: 'Please add a name, email or password to your request'
       });
     }
     if (validate.id(req.params.id)) {
