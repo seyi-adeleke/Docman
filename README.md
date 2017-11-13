@@ -68,6 +68,21 @@ All api endpoints require authentication and authorization. On succesfull login 
 # Limitations
 The api uses a shared database connection thereby leading to occasionally slow response times
 
+# Environments
+This project has three environments configured all with their own databases
+ - Development
+ - Test
+ - Production
+ 
+### Development
+This describes my local devlopment environment with certain configurations that make the workflow easier. It's designed to simulate a production environment as closely as possible but it is configured to work with dummy data
+### Test
+The test environment is used to run the integration and unit tests for this application, it is completely seperate and it has its own migrations and seeders. For this project the test environment is configured on TRAVIS CI.
+### Production
+This is the live environment that contains real data. Currently, it is hosted on Heroku.
+ 
+
+
 # License
 
 (The MIT License)
